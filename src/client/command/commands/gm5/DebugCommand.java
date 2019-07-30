@@ -38,9 +38,10 @@ import server.maps.MapleReactor;
 import java.awt.*;
 import java.util.Arrays;
 import java.util.List;
+import server.life.MapleNPC;
 
 public class DebugCommand extends Command {
-    private final static String debugTypes[] = {"monster", "packet", "portal", "spawnpoint", "pos", "map", "mobsp", "event", "areas", "reactors", "servercoupons", "playercoupons", "timer", "marriage", "buff", ""};
+    private final static String debugTypes[] = {"monster", "packet", "portal", "spawnpoint", "pos", "map", "npc", "mobsp", "event", "areas", "reactors", "servercoupons", "playercoupons", "timer", "marriage", "buff", ""};
     
     {
         setDescription("");
@@ -74,7 +75,15 @@ public class DebugCommand extends Command {
                     player.message("Monster ID: " + monster.getId() + " Aggro target: " + ((controller != null) ? controller.getName() + " Has aggro: " + monster.isControllerHasAggro() + " Knowns aggro: " + monster.isControllerKnowsAboutAggro() : "<none>"));
                 }
                 break;
-
+                
+            case "npc":
+                List<MapleMapObject> npcs = player.getMap().getMapObjectsInRange(player.getPosition(), Double.POSITIVE_INFINITY, Arrays.asList(MapleMapObjectType.NPC));
+                for (MapleMapObject npcmo : npcs) {
+                    MapleNPC npc = (MapleNPC) npcmo;
+                    player.message("NPCid: " + npc.getId() + "   Name: " + npc.getName());
+                }
+            break;
+                
             case "packet":
                 //player.getMap().broadcastMessage(MaplePacketCreator.customPacket(joinStringFrom(params, 1)));
                 break;
