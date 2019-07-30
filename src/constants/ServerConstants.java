@@ -66,7 +66,7 @@ public class ServerConstants {
     
     public static final boolean USE_MAXRANGE = true;                //Will send and receive packets from all events on a map, rather than those of only view range.
     public static final boolean USE_MAXRANGE_ECHO_OF_HERO = true;
-    public static final boolean USE_MTS = false;
+    public static final boolean USE_MTS = true;
     public static final boolean USE_CPQ = true;                     //Renders the CPQ available or not.
     public static final boolean USE_AUTOHIDE_GM = false;            //When enabled, GMs are automatically hidden when joining. Thanks to Steven Deblois (steven1152).
     public static final boolean USE_BUYBACK_SYSTEM = true;          //Enables the HeavenMS-builtin buyback system, to be used by dead players when clicking the MTS button.
