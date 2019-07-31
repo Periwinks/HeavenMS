@@ -1163,6 +1163,18 @@ public class MapleCharacter extends AbstractMapleCharacterObject {
             }
         }
         
+        // Save those who overleveled as a beginner; prevent sp gain on GMs
+        if (newJob.getId() % 100 == 0 && gmLevel < 2) {
+            int bonusSP = (3 * (level - 10));
+            
+            if (newJob.getId() == 200) {
+                // Job advances at 8
+                bonusSP += 6;
+            }
+            
+            spGain += bonusSP;
+        }
+        
         if (spGain > 0) {
             gainSp(spGain, GameConstants.getSkillBook(newJob.getId()), true);
         }
@@ -6494,7 +6506,7 @@ public class MapleCharacter extends AbstractMapleCharacterObject {
         } else if (level == 90) {
             yellowMessage("Hey do you like the amusement park? I heard Spooky World is the best theme park around. I heard they sell cute teddy-bears.");
         } else if (level == 95) {
-            yellowMessage("100% of people who hit level 95 in HeavenMS don't live to be 95 years old.");
+            yellowMessage("100% of people who hit level 95 in LuckyStory don't live to be 95 years old.");
         } else if (level == 100) {
             yellowMessage("Mid-journey so far... You just reached level 100! Now THAT's such a feat, however to manage the 200 you will need even more passion and determination than ever! Good hunting!");
         } else if (level == 105) {
@@ -7418,38 +7430,40 @@ public class MapleCharacter extends AbstractMapleCharacterObject {
         if (eim != null) {
             eim.playerKilled(this);
         }
-        int[] charmID = {5130000, 4031283, 4140903};
-        int possesed = 0;
-        int i;
-        for (i = 0; i < charmID.length; i++) {
-            int quantity = getItemQuantity(charmID[i], false);
-            if (possesed == 0 && quantity > 0) {
-                possesed = quantity;
-                break;
+        
+        // Do not lose charms/xp in towns or events
+        if (!getMap().isTown() && !getMap().isEventMap()) {
+            int[] charmID = {5130000, 4031283, 4140903};
+            int possesed = 0;
+            int i;
+            for (i = 0; i < charmID.length; i++) {
+                int quantity = getItemQuantity(charmID[i], false);
+                if (possesed == 0 && quantity > 0) {
+                    possesed = quantity;
+                    break;
+                }
             }
-        }
-        if (possesed > 0) {
-            message("You have used a safety charm, so your EXP points have not been decreased.");
-            MapleInventoryManipulator.removeById(client, ItemConstants.getInventoryType(charmID[i]), charmID[i], 1, true, false);
-        } else if (getJob() != MapleJob.BEGINNER) { //Hmm...
-            if (!FieldLimit.NO_EXP_DECREASE.check(getMap().getFieldLimit())) {  // thanks Conrad for noticing missing FieldLimit check
-                int XPdummy = ExpTable.getExpNeededForLevel(getLevel());
-                if (getMap().isTown()) {
-                    XPdummy /= 100;
-                }
-                if (XPdummy == ExpTable.getExpNeededForLevel(getLevel())) {
-                    if (getLuk() <= 100 && getLuk() > 8) {
-                        XPdummy *= (200 - getLuk()) / 2000;
-                    } else if (getLuk() < 8) {
-                        XPdummy /= 10;
-                    } else {
-                        XPdummy /= 20;
-                    }
-                }
-                if (getExp() > XPdummy) {
-                    loseExp(XPdummy, false, false);
-                } else {
-                    loseExp(getExp(), false, false);
+            if (possesed > 0) {
+                message("You have used a safety charm, so your EXP points have not been decreased.");
+                MapleInventoryManipulator.removeById(client, ItemConstants.getInventoryType(charmID[i]), charmID[i], 1, true, false);
+            } else if (!(getJob() == MapleJob.BEGINNER || getJob() == MapleJob.NOBLESSE || getJob() == MapleJob.LEGEND)) {
+                if (!FieldLimit.NO_EXP_DECREASE.check(getMap().getFieldLimit())) {  // thanks Conrad for noticing missing FieldLimit check
+                    // 100% MaxXP
+                    int maxXPTNL = ExpTable.getExpNeededForLevel(getLevel());
+                    
+                    // EXPLoss calculations
+                    double baseLoss = 0.15;
+                    double randLoss = 0.25 * Math.random();
+                    double lukLoss = 0.1 * getLukContributionScalar();
+                    
+                    // Should be a double between 0 ~ 0.5
+                    double xpLoss = baseLoss + randLoss + lukLoss;
+                    
+                    // EXP loss max is 50% of total
+                    maxXPTNL = (int) Math.floor(xpLoss * maxXPTNL);
+                    
+                    // Lose exp, but do not drop into negatives
+                    loseExp(Math.min(maxXPTNL, getExp()), false, false);
                 }
             }
         }
@@ -10653,4 +10667,7 @@ public class MapleCharacter extends AbstractMapleCharacterObject {
         return getClient().getLanguage();
     }
     
+    private double getLukContributionScalar() {
+        return Math.max(Math.random(), (1004.0 - luk) / 1000.0);
+    }
 }
