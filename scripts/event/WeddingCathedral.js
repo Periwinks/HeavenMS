@@ -31,12 +31,12 @@ var clearMap = 680000500;
 var minMapId = 680000100;
 var maxMapId = 680000401;
 
-var startMsgTime = 4;
-var blessMsgTime = 5;
+var startMsgTime = 2;
+var blessMsgTime = 3;
 
-var eventTime = 10;    // 10 minutes gathering
+var eventTime = 7;    // 7 minutes gathering
 var ceremonyTime = 20; // 20 minutes ceremony
-var blessingsTime = 15;// blessings are held until the 15th minute from the ceremony start
+var blessingsTime = 5;// blessings are held until the 5th minute from the ceremony start
 var partyTime = 45;    // 45 minutes party
 
 var forceHideMsgTime = 10;  // unfortunately, EIM weddings don't send wedding talk packets to the server... this will need to suffice

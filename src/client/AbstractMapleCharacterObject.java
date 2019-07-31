@@ -417,6 +417,10 @@ public abstract class AbstractMapleCharacterObject extends AbstractAnimatedMaple
         changeStatPool(hpMpPool, null, null, -1, silent);
     }
     
+    public void kill() {
+        updateHp(0);
+    }
+    
     public void updateHp(int hp) {
         updateHpMaxHp(hp, Short.MIN_VALUE);
     }

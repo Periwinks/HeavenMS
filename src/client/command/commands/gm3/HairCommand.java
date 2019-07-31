@@ -45,32 +45,42 @@ public class HairCommand extends Command {
 
         try {
             if (params.length == 1) {
-                int itemId = Integer.parseInt(params[0]);
-                if (!ItemConstants.isHair(itemId) || MapleItemInformationProvider.getInstance().getName(itemId) == null) {
-                    player.yellowMessage("Hair id '" + params[0] + "' does not exist.");
+                // hair <id>
+                int id = Integer.parseInt(params[0]);
+                
+                if (!ItemConstants.isHair(id) || MapleItemInformationProvider.getInstance().getName(id) == null) {
+                    player.yellowMessage("Hair id '" + id + "' does not exist.");
                     return;
                 }
-
-                player.setHair(itemId);
-                player.updateSingleStat(MapleStat.HAIR, itemId);
-                player.equipChanged();
-            } else {
-                int itemId = Integer.parseInt(params[1]);
-                if (!ItemConstants.isHair(itemId) || MapleItemInformationProvider.getInstance().getName(itemId) == null) {
-                    player.yellowMessage("Hair id '" + params[1] + "' does not exist.");
+                
+                changeHair(player, id);
+            }
+            else {
+                // hair <target> <id>
+                String targetName = params[0];
+                int id = Integer.parseInt(params[1]);
+                
+                if (!ItemConstants.isHair(id) || MapleItemInformationProvider.getInstance().getName(id) == null) {
+                    player.yellowMessage("Hair id '" + id + "' does not exist.");
                     return;
                 }
-
-                MapleCharacter victim = c.getChannelServer().getPlayerStorage().getCharacterByName(params[0]);
+                
+                MapleCharacter victim = c.getChannelServer().getPlayerStorage().getCharacterByName(targetName);
+                
                 if (victim != null) {
-                    victim.setHair(itemId);
-                    victim.updateSingleStat(MapleStat.HAIR, itemId);
-                    victim.equipChanged();
-                } else {
-                    player.yellowMessage("Player '" + params[0] + "' has not been found on this channel.");
+                    changeHair(victim, id);
+                }
+                else {
+                    player.yellowMessage("Player " + targetName + " could not be found");
                 }
             }
         } catch (Exception e) {
         }
+    }
+    
+    private void changeHair(MapleCharacter player, int id) {
+        player.setHair(id);
+        player.updateSingleStat(MapleStat.HAIR, id);
+        player.equipChanged();
     }
 }

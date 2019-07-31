@@ -329,6 +329,10 @@ public class NPCConversationManager extends AbstractPlayerInteraction {
 		getPlayer().updateSingleStat(MapleStat.SKIN, color);
 		getPlayer().equipChanged();
 	}
+        
+        public void incAP() {
+            getPlayer().gainAp(1, false);
+        }
 
 	public int itemQuantity(int itemid) {
 		return getPlayer().getInventory(ItemConstants.getInventoryType(itemid)).countById(itemid);
