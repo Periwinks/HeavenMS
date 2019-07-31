@@ -45,32 +45,42 @@ public class FaceCommand extends Command {
 
         try {
             if (params.length == 1) {
-                int itemId = Integer.parseInt(params[0]);
-                if (!ItemConstants.isFace(itemId) || MapleItemInformationProvider.getInstance().getName(itemId) == null) {
-                    player.yellowMessage("Face id '" + params[0] + "' does not exist.");
+                // face <id>
+                int id = Integer.parseInt(params[0]);
+                
+                if (!ItemConstants.isFace(id) || MapleItemInformationProvider.getInstance().getName(id) == null) {
+                    player.yellowMessage("Face id '" + id + "' does not exist.");
                     return;
                 }
-
-                player.setFace(itemId);
-                player.updateSingleStat(MapleStat.FACE, itemId);
-                player.equipChanged();
-            } else {
-                int itemId = Integer.parseInt(params[1]);
-                if (!ItemConstants.isFace(itemId) || MapleItemInformationProvider.getInstance().getName(itemId) == null) {
-                    player.yellowMessage("Face id '" + params[1] + "' does not exist.");
+                
+                changeFace(player, id);
+            }
+            else {
+                // face <target> <id>
+                String targetName = params[0];
+                int id = Integer.parseInt(params[1]);
+                
+                if (!ItemConstants.isFace(id) || MapleItemInformationProvider.getInstance().getName(id) == null) {
+                    player.yellowMessage("Face id '" + id + "' does not exist.");
+                    return;
                 }
-
-                MapleCharacter victim = c.getChannelServer().getPlayerStorage().getCharacterByName(params[0]);
-                if (victim == null) {
-                    victim.setFace(itemId);
-                    victim.updateSingleStat(MapleStat.FACE, itemId);
-                    victim.equipChanged();
-                } else {
-                    player.yellowMessage("Player '" + params[0] + "' has not been found on this channel.");
+                
+                MapleCharacter victim = c.getChannelServer().getPlayerStorage().getCharacterByName(targetName);
+                
+                if (victim != null) {
+                    changeFace(victim, id);
+                }
+                else {
+                    player.yellowMessage("Player " + targetName + " could not be found");
                 }
             }
         } catch (Exception e) {
         }
-
+    }
+    
+    private void changeFace(MapleCharacter player, int id) {
+        player.setFace(id);
+        player.updateSingleStat(MapleStat.FACE, id);
+        player.equipChanged();
     }
 }
