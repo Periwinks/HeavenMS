@@ -1693,7 +1693,7 @@ public class MapleStatEffect {
     }
 
     public boolean isMorphWithoutAttack() {
-        return morphId > 0 && morphId < 100; // Every morph item I have found has been under 100, pirate skill transforms start at 1000.
+        return morphId > 0 && morphId < 250; // Every morph item I have found has been under 100, pirate skill transforms start at 1000.
     }
 
     private boolean isMist() {

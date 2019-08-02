@@ -378,6 +378,7 @@ public class CommandsExecutor {
         addCommand("showmovelife", 5, ShowMoveLifeCommand.class);
         addCommand("showsessions", 5, ShowSessionsCommand.class);
         addCommand("iplist", 5, IpListCommand.class);
+        addCommand("morph", 5, MorphCommand.class);
         
         commandsNameDesc.add(levelCommandsCursor);
     }
