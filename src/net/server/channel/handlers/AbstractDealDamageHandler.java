@@ -266,8 +266,10 @@ public abstract class AbstractDealDamageHandler extends AbstractMaplePacketHandl
                         distanceToDetect += 60000;
                     
                     if (distance > distanceToDetect) {
-                        AutobanFactory.DISTANCE_HACK.alert(player, "Distance Sq to monster: " + distance + " SID: " + attack.skill + " MID: " + monster.getId());
-                        monster.refreshMobPosition();
+                        if (!(player.getMapId() == 270050100 && distance < 769000)) { // Pink Bean Statues
+                            AutobanFactory.DISTANCE_HACK.alert(player, "Distance Sq to monster: " + distance + " SID: " + attack.skill + " MID: " + monster.getId());
+                            monster.refreshMobPosition();
+                        }
                     }
                     
                     int totDamageToOneMonster = 0;
