@@ -64,8 +64,9 @@ public class LevelCommand extends Command {
     private void level(MapleCharacter player, int newLevel) {
         player.loseExp(player.getExp(), false, false);
         player.setLevel(Math.min(newLevel, player.getMaxClassLevel()) - 1);
-        
         player.resetPlayerRates();
         if (ServerConstants.USE_ADD_RATES_BY_LEVEL) player.setPlayerRates();
+        player.setWorldRates();
+        player.levelUp(false);
     }
 }
