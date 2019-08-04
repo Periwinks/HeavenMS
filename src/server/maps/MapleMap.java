@@ -4235,10 +4235,10 @@ public class MapleMap {
     
     private final List<Point> takenSpawns = new LinkedList<>();
     private final List<GuardianSpawnPoint> guardianSpawns = new LinkedList<>();
-    private final List<MCSkill> blueTeamBuffs = new ArrayList();
-    private final List<MCSkill> redTeamBuffs = new ArrayList();
-    private List<Integer> skillIds = new ArrayList();
-    private List<Pair<Integer, Integer>> mobsToSpawn = new ArrayList();
+    private final List<MCSkill> blueTeamBuffs = new ArrayList<>();
+    private final List<MCSkill> redTeamBuffs = new ArrayList<>();
+    private List<Integer> skillIds = new ArrayList<>();
+    private List<Pair<Integer, Integer>> mobsToSpawn = new ArrayList<>();
 
     public List<MCSkill> getBlueTeamBuffs() {
         return blueTeamBuffs;
