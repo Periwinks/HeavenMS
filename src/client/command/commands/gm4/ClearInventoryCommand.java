@@ -23,6 +23,7 @@ import client.MapleClient;
 import client.command.Command;
 import client.inventory.MapleInventoryType;
 import client.inventory.manipulator.MapleInventoryManipulator;
+import java.util.EnumSet;
 
 /**
  *
@@ -70,7 +71,7 @@ public class ClearInventoryCommand extends Command {
         switch (type.toLowerCase()) {
             case "all":
                 MapleInventoryManipulator.clearEquipped(victim);
-                for (MapleInventoryType invType : MapleInventoryType.values()) {
+                for (MapleInventoryType invType : EnumSet.of(MapleInventoryType.EQUIP, MapleInventoryType.USE, MapleInventoryType.ETC, MapleInventoryType.SETUP, MapleInventoryType.CASH)) {
                     MapleInventoryManipulator.clearInvOfType(victim, invType);
                 }
                 break;
