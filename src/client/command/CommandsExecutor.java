@@ -306,7 +306,6 @@ public class CommandsExecutor {
         addCommand("maxenergy", 3, MaxEnergyCommand.class);
         addCommand("killall", 3, KillAllCommand.class);
         addCommand("notice", 3, NoticeCommand.class);
-        addCommand("rip", 3, RipCommand.class);
         addCommand("openportal", 3, OpenPortalCommand.class);
         addCommand("closeportal", 3, ClosePortalCommand.class);
         addCommand("pe", 3, PeCommand.class);

@@ -24,7 +24,6 @@ import client.MapleClient;
 import client.MapleCharacter;
 import java.util.Collections;
 import java.util.List;
-import net.server.PlayerBuffValueHolder;
 import tools.MaplePacketCreator;
 import tools.Pair;
 

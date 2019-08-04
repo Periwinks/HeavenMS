@@ -59,7 +59,6 @@ public class PeCommand extends Command {
             ex.printStackTrace();
             player.yellowMessage("Failed to load pe.txt");
             return;
-
         }
         MaplePacketLittleEndianWriter mplew = new MaplePacketLittleEndianWriter();
         mplew.write(HexTool.getByteArrayFromHexString(packet));
