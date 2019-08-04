@@ -365,6 +365,7 @@ public class CommandsExecutor {
         addCommand("pmob", 4, PmobCommand.class);
         addCommand("pmobremove", 4, PmobRemoveCommand.class);
         addCommand("setname", 4, SetNameCommand.class);
+        addCommand("clearinv", 4, ClearInventoryCommand.class);
         
         commandsNameDesc.add(levelCommandsCursor);
     }
