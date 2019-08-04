@@ -21,13 +21,8 @@ package client.command.commands.gm4;
 import client.MapleCharacter;
 import client.MapleClient;
 import client.command.Command;
-import client.inventory.Equip;
-import client.inventory.Item;
-import client.inventory.MapleInventory;
 import client.inventory.MapleInventoryType;
-import client.inventory.ModifyInventory;
-import java.util.ArrayList;
-import tools.MaplePacketCreator;
+import client.inventory.manipulator.MapleInventoryManipulator;
 
 /**
  *
@@ -70,86 +65,35 @@ public class ClearInventoryCommand extends Command {
      * Clears an inventory for victim if valid type
      * @param victim
      * @param type Inventory type to be cleared
-     * @return 
      */
     private void clearInventory(MapleCharacter victim, String type) {
         switch (type.toLowerCase()) {
             case "all":
-                clearEquipped(victim);
+                MapleInventoryManipulator.clearEquipped(victim);
                 for (MapleInventoryType invType : MapleInventoryType.values()) {
-                    clear(victim, invType);
+                    MapleInventoryManipulator.clearInvOfType(victim, invType);
                 }
                 break;
             case "equipped":
-                clearEquipped(victim);
+                MapleInventoryManipulator.clearEquipped(victim);
                 break;
             case "eqp": // not equipped
-                clear(victim, MapleInventoryType.EQUIP);
+                MapleInventoryManipulator.clearInvOfType(victim, MapleInventoryType.EQUIP);
                 break;
             case "use":
-                clear(victim, MapleInventoryType.USE);
+                MapleInventoryManipulator.clearInvOfType(victim, MapleInventoryType.USE);
                 break;
             case "ins": // install, chairs, setup
-                clear(victim, MapleInventoryType.SETUP);
+                MapleInventoryManipulator.clearInvOfType(victim, MapleInventoryType.SETUP);
                 break;
             case "etc":
-                clear(victim, MapleInventoryType.ETC);
+                MapleInventoryManipulator.clearInvOfType(victim, MapleInventoryType.ETC);
                 break;
             case "cash": // Player Cash Item Inventory
-                clear(victim, MapleInventoryType.CASH);
+                MapleInventoryManipulator.clearInvOfType(victim, MapleInventoryType.CASH);
                 break;
             default:
                 break;
         }
-    }
-    
-    private void clear(MapleCharacter victim, MapleInventoryType type) {
-        MapleInventory inv = victim.getInventory(type);
-        ArrayList<ModifyInventory> mods = new ArrayList<>();
-        
-        inv.lockInventory();
-        try {
-            for (short slot = 0; slot <= inv.getSlotLimit(); slot++) {
-                Item item = inv.getItem(slot);
-                
-                if (item != null) {
-                    inv.removeItem(slot, item.getQuantity(), false);
-                    mods.add(new ModifyInventory(3, item));
-                }
-            }
-        }
-        finally {
-            inv.unlockInventory();
-        }
-        
-        victim.getClient().announce(MaplePacketCreator.modifyInventory(false, mods));
-    }
-    
-    private void clearEquipped(MapleCharacter victim) {
-        MapleInventory inv = victim.getInventory(MapleInventoryType.EQUIPPED);
-        ArrayList<ModifyInventory> mods = new ArrayList<>();
-        
-        // equip slots
-        final short[] slots = {
-          -1, -2, -3, -4, -5, -6, -7, -8, -9, -10, -11,
-            -12, -13, -14, -15, -16, -17, -18, -19, -49, -50
-        };
-        
-        inv.lockInventory();
-        try {
-            for (short i : slots) {
-                Item item = inv.getItem(i);
-                
-                if (item != null) {
-                    victim.unequippedItem((Equip) item);
-                    inv.removeItem(i);
-                    mods.add(new ModifyInventory(3, item));
-                }
-            }
-        } finally {
-            inv.unlockInventory();
-        }
-
-        victim.getClient().announce(MaplePacketCreator.modifyInventory(false, mods));
     }
 }
