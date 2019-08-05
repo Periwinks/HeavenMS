@@ -175,6 +175,17 @@ public class MapleStorage {
         
         return ret;
     }
+    
+    public void wipe() {
+        lock.lock();
+        try {
+            items.clear();
+            setMeso(0);
+        }
+        finally {
+            lock.unlock();
+        }
+    }
 
     public void store(Item item) {
         lock.lock();

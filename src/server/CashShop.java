@@ -414,6 +414,16 @@ public class CashShop {
             lock.unlock();
         }
     }
+    
+    public void wipe() {
+        lock.lock();
+        try {
+            inventory.clear();
+        }
+        finally {
+            lock.unlock();
+        }
+    }
 
     public List<Integer> getWishList() {
         return wishList;

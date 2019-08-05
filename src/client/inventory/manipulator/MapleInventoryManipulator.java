@@ -787,4 +787,63 @@ public class MapleInventoryManipulator {
     public static boolean isSandboxItem(Item it) {
         return (it.getFlag() & ItemConstants.SANDBOX) == ItemConstants.SANDBOX;
     }
+    
+    /**
+     * Permanently deletes all currently-equipped items from a player
+     * @param victim 
+     */
+    public static void clearEquipped(MapleCharacter victim) {
+        MapleInventory inv = victim.getInventory(MapleInventoryType.EQUIPPED);
+        ArrayList<ModifyInventory> mods = new ArrayList<>();
+        
+        // equip slots
+        final short[] slots = {
+          -1, -2, -3, -4, -5, -6, -7, -8, -9, -10, -11,
+            -12, -13, -14, -15, -16, -17, -18, -19, -49, -50
+        };
+        
+        inv.lockInventory();
+        try {
+            for (short i : slots) {
+                Item item = inv.getItem(i);
+                
+                if (item != null) {
+                    victim.unequippedItem((Equip) item);
+                    inv.removeItem(i);
+                    mods.add(new ModifyInventory(3, item));
+                }
+            }
+        } finally {
+            inv.unlockInventory();
+        }
+
+        victim.getClient().announce(MaplePacketCreator.modifyInventory(false, mods));
+    }
+    
+    /**
+     * Permanently Deletes all items in a player's inventory
+     * @param victim
+     * @param type 
+     */
+    public static void clearInvOfType(MapleCharacter victim, MapleInventoryType type) {
+        MapleInventory inv = victim.getInventory(type);
+        ArrayList<ModifyInventory> mods = new ArrayList<>();
+        
+        inv.lockInventory();
+        try {
+            for (short slot = 0; slot <= inv.getSlotLimit(); slot++) {
+                Item item = inv.getItem(slot);
+                
+                if (item != null) {
+                    inv.removeItem(slot, item.getQuantity(), false);
+                    mods.add(new ModifyInventory(3, item));
+                }
+            }
+        }
+        finally {
+            inv.unlockInventory();
+        }
+        
+        victim.getClient().announce(MaplePacketCreator.modifyInventory(false, mods));
+    }
 }

@@ -681,7 +681,7 @@ public abstract class AbstractMapleCharacterObject extends AbstractAnimatedMaple
         }
     }
     
-    protected void updateStrDexIntLuk(int str, int dex, int int_, int luk, int remainingAp) {
+    public void updateStrDexIntLuk(int str, int dex, int int_, int luk, int remainingAp) {
         changeStrDexIntLuk(str, dex, int_, luk, remainingAp, false);
     }
     

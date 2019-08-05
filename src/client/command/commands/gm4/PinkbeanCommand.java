@@ -37,6 +37,5 @@ public class PinkbeanCommand extends Command {
     public void execute(MapleClient c, String[] params) {
         MapleCharacter player = c.getPlayer();
         player.getMap().spawnMonsterOnGroundBelow(MapleLifeFactory.getMonster(8820001), player.getPosition());
-
     }
 }

@@ -38,15 +38,13 @@ public class MaxStatCommand extends Command {
     public void execute(MapleClient c, String[] params) {
         MapleCharacter player = c.getPlayer();
         player.loseExp(player.getExp(), false, false);
-        player.setLevel(255);
+        player.setLevel(200);
         player.resetPlayerRates();
         if (ServerConstants.USE_ADD_RATES_BY_LEVEL) player.setPlayerRates();
         player.setWorldRates();
         player.updateStrDexIntLuk(Short.MAX_VALUE);
-        player.setFame(13337);
         player.updateMaxHpMaxMp(30000, 30000);
-        player.updateSingleStat(MapleStat.LEVEL, 255);
-        player.updateSingleStat(MapleStat.FAME, 13337);
+        player.updateSingleStat(MapleStat.LEVEL, 200);
         player.yellowMessage("Stats maxed out.");
     }
 }
