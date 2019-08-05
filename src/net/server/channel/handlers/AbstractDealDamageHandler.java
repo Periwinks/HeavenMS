@@ -864,10 +864,11 @@ public abstract class AbstractDealDamageHandler extends AbstractMaplePacketHandl
                                     hitDmgMax *= 0.5;
                             }
                     }
+                    
+                    boolean isSnipe = ret.skill == Marksman.SNIPE;
 
-                    if(ret.skill == Marksman.SNIPE) {
-                            damage = 195000 + Randomizer.nextInt(5000);
-                            hitDmgMax = 200000;
+                    if(isSnipe) {
+                        damage = getSnipeDamage(chr);
                     } else if (ret.skill == Beginner.BAMBOO_RAIN || ret.skill == Noblesse.BAMBOO_RAIN || ret.skill == Evan.BAMBOO_THRUST || ret.skill == Legend.BAMBOO_THRUST) {
                         hitDmgMax = 82569000; // 30% of Max HP of strongest Dojo boss
                     }
@@ -876,17 +877,20 @@ public abstract class AbstractDealDamageHandler extends AbstractMaplePacketHandl
                     if(canCrit) // They can crit, so up the max.
                             maxWithCrit *= 2;
 
-                    // Warn if the damage is over 1.5x what we calculated above.
-                    if(damage > maxWithCrit * 1.5) {
-                        AutobanFactory.DAMAGE_HACK.alert(chr, "DMG: " + damage + " MaxDMG: " + maxWithCrit + " SID: " + ret.skill + " MobID: " + (monster != null ? monster.getId() : "null") + " Map: " + chr.getMap().getMapName() + " (" + chr.getMapId() + ")");
-                    }
+                    // Remove warning for snipe calculations done serverside
+                    if (!isSnipe) {
+                        // Warn if the damage is over 1.5x what we calculated above.
+                        if(damage > maxWithCrit * 1.5) {
+                            AutobanFactory.DAMAGE_HACK.alert(chr, "DMG: " + damage + " MaxDMG: " + maxWithCrit + " SID: " + ret.skill + " MobID: " + (monster != null ? monster.getId() : "null") + " Map: " + chr.getMap().getMapName() + " (" + chr.getMapId() + ")");
+                        }
 
-                    // Add a ab point if its over 5x what we calculated.
-                    if(damage > maxWithCrit  * 5) {
-                            AutobanFactory.DAMAGE_HACK.addPoint(chr.getAutobanManager(), "DMG: " + damage + " MaxDMG: " + maxWithCrit + " SID: " + ret.skill + " MobID: " + (monster != null ? monster.getId() : "null") + " Map: " + chr.getMap().getMapName() + " (" + chr.getMapId() + ")");
+                        // Add a ab point if its over 5x what we calculated.
+                        if(damage > maxWithCrit  * 5) {
+                                AutobanFactory.DAMAGE_HACK.addPoint(chr.getAutobanManager(), "DMG: " + damage + " MaxDMG: " + maxWithCrit + " SID: " + ret.skill + " MobID: " + (monster != null ? monster.getId() : "null") + " Map: " + chr.getMap().getMapName() + " (" + chr.getMapId() + ")");
+                        }
                     }
-
-                    if (ret.skill == Marksman.SNIPE || (canCrit && damage > hitDmgMax)) {
+                    
+                    if (isSnipe || (canCrit && damage > hitDmgMax)) {
                             // If the skill is a crit, inverse the damage to make it show up on clients.
                             damage = -Integer.MAX_VALUE + damage - 1;
                     }
@@ -907,5 +911,30 @@ public abstract class AbstractDealDamageHandler extends AbstractMaplePacketHandl
 
     private static int rand(int l, int u) {
         return (int) ((Math.random() * (u - l + 1)) + l);
+    }
+    
+    private static int getSnipeDamage(MapleCharacter player) {
+        // Weapon attack modifier
+        final int snipeLv = player.getSkillLevel(Marksman.SNIPE);
+        final int masteryLv = player.getSkillLevel(Marksman.MARKSMAN_BOOST);
+        final int modLv = player.getLevel() - 120;
+        final int watkAmount = player.getTotalWatk();
+        int wa = watkAmount + (modLv) + (snipeLv * 3);
+        
+        // Remember that there is a 3.4 crit that isn't being calculated in
+        // Note that snipe level 1 should be better than maxed SE strafe crit... (340% vanilla per 1 arrow)
+        final int basePercent = 240; // Level 0
+        final int percentPerLv = 3;
+        int pc = basePercent + (snipeLv * percentPerLv); // Skill %
+        
+        // Should never be a # geq 1
+        final double baseMastery = .47;
+        final double masteryPerSnipeLv = .005; // 30 * .005 = .15
+        final double masteryPerMMBLv = .01; // 30 * .01 = .30
+        double mastery = baseMastery + (snipeLv * masteryPerSnipeLv) + (masteryLv * masteryPerMMBLv);
+        
+        // The actual damage calculations
+        int max = player.calculateMaxBaseDamage(wa) * pc / 100;
+        return (int) Math.floor(max * ((Math.random() * (1 - mastery)) + (mastery))); // hooray
     }
 }
