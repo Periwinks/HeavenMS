@@ -4362,7 +4362,7 @@ public class MapleCharacter extends AbstractMapleCharacterObject {
                 }, buffInterval, buffInterval);
             }
         } else if (effect.isRecovery()) {
-            int healInterval = (ServerConstants.USE_ULTRA_RECOVERY) ? 2000 : 5000;
+            int healInterval = 500; // yes, 2 times per second :D
             final byte heal = (byte) effect.getX();
             
             chrLock.lock();

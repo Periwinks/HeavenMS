@@ -205,8 +205,6 @@ public class ServerConstants {
     public static final int CHSCROLL_STAT_RANGE = 6;            //Stat upgrade range (-N, N) on chaos scrolls.
     
     //Beginner Skills Configuration
-    public static final boolean USE_ULTRA_NIMBLE_FEET = true;   //Massive speed & jump upgrade.
-    public static final boolean USE_ULTRA_RECOVERY = true;      //Massive recovery amounts overtime.
     public static final boolean USE_ULTRA_THREE_SNAILS = true;  //Massive damage on shell toss.
     
     //Other Skills Configuration
@@ -282,7 +280,6 @@ public class ServerConstants {
     
     //Dojo Configuration
     public static final boolean USE_FAST_DOJO_UPGRADE = true;   //Reduced Dojo training points amount required for a belt upgrade.
-    public static final boolean USE_DEADLY_DOJO = true;        //Should bosses really use 1HP,1MP attacks in dojo?
     public static final int DOJO_ENERGY_ATK = 100;              //Dojo energy gain when deal attack
     public static final int DOJO_ENERGY_DMG =  25;              //Dojo energy gain when recv attack
     
