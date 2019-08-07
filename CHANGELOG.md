@@ -12,7 +12,7 @@ and this project also *attempts* to adhere to [Semantic Versioning](https://semv
 - Cloto repeats quiz question when given incorrect coupon count
 - Basic MTS (wanted, auction not yet implemented)
 - Onyx chest exchanges (items not final; only gives onyx apples)
-- Ability to propose to character of the same sex (giftlist NPC buttons will still say bride and groom) (credits to Arnah and Ubaware for the address/help!)
+- Ability to propose to character of the same sex (giftlist NPC buttons will still say bride and groom) (credits to Arnah and Ubaware for the address info!)
 - Buff icons for summons (credits to ronancpl!)
 - Cash Shop name changes (credits to Ubaware!)
 - Todo command (GmLv2)
@@ -32,7 +32,7 @@ and this project also *attempts* to adhere to [Semantic Versioning](https://semv
 - Snipe no longer deals a flat damage amount, but scales with your character :blush:
 - Wedding wait times decreased
 - EXP Loss and safety charm loss will no longer take place in event maps or towns
-- EXP Loss formula now ranges from 15% and 50%
+- EXP Loss formula now ranges from 15% and 50% of total EXP TNL
 - Command arguments are now case sensitive
 - Item, morph id range spans increased to incorporate future version styles
 
