@@ -141,15 +141,17 @@ public final class MoveLifeHandler extends AbstractMovementPacketHandler {
 		short start_x = slea.readShort(); // hmm.. startpos?
 		short start_y = slea.readShort(); // hmm...
 		Point startPos = new Point(start_x, start_y - 2);
+		Point serverStartPos = new Point(monster.getPosition());
 		long movementDataStart = slea.getPosition();
-        updatePosition(slea, monster, 0);
-        long movementDataLength = slea.getPosition() - movementDataStart; //how many bytes were read by updatePosition
-		
-        Boolean aggro = monster.aggroMoveLifeUpdate(player);
-        if (aggro == null) return;
-        
-        if (nextUse != null) {
-            c.announce(MaplePacketCreator.moveMonsterResponse(objectid, moveid, mobMp, aggro, nextSkillId, nextSkillLevel));
+                
+                updatePosition(slea, monster, -2);  // Thanks Doodle and ZERO傑洛 for noticing sponge-based bosses moving out of stage in case of no-offset applied
+                long movementDataLength = slea.getPosition() - movementDataStart; //how many bytes were read by updatePosition
+
+                Boolean aggro = monster.aggroMoveLifeUpdate(player);
+                if (aggro == null) return;
+
+                if (nextUse != null) {
+                        c.announce(MaplePacketCreator.moveMonsterResponse(objectid, moveid, mobMp, aggro, nextSkillId, nextSkillLevel));
 		} else {
 			c.announce(MaplePacketCreator.moveMonsterResponse(objectid, moveid, mobMp, aggro));
 		}
@@ -159,7 +161,7 @@ public final class MoveLifeHandler extends AbstractMovementPacketHandler {
                 System.out.println((isSkill ? "SKILL " : (isAttack ? "ATTCK " : " ")) + "castPos: " + castPos + " rawAct: " + rawActivity + " opt: " + pOption + " skillID: " + useSkillId + " skillLV: " + useSkillLevel + " " + "allowSkill: " + nextMovementCouldBeSkill + " mobMp: " + mobMp);
             }
             slea.seek(movementDataStart);
-            map.broadcastMessage(player, MaplePacketCreator.moveMonster(objectid, nextMovementCouldBeSkill, rawActivity, useSkillId, useSkillLevel, pOption, startPos, slea, movementDataLength), monster.getPosition());
+            map.broadcastMessage(player, MaplePacketCreator.moveMonster(objectid, nextMovementCouldBeSkill, rawActivity, useSkillId, useSkillLevel, pOption, startPos, slea, movementDataLength), serverStartPos);
 			//updatePosition(res, monster, -2); //does this need to be done after the packet is broadcast?
 			map.moveMonster(monster, monster.getPosition());
 		}

@@ -53,6 +53,11 @@ function getNanaLocation(player) {
         }
     }
     
+    // Boat Quay & Magatia reuse the kerning city nana npc/quests... lazy nexon...
+    if (mapid == 261000000 || mapid == 541000000) {
+        return 1;
+    }
+    
     return -1;
 }
 
@@ -99,14 +104,14 @@ function action(mode, type, selection) {
 
         if(status == 0) {
             if(!cm.isQuestStarted(100400)) {
-                cm.sendOk("Hello #b#h0##k, I'm #p9201001# the fairy of Love.");
+                cm.sendOk("Hello #b#h0##k, I'm Nana the fairy of Love.");
                 cm.dispose();
                 return;
             }
             
             nanaLoc = getNanaLocation(cm.getPlayer());
             if(nanaLoc == -1) {
-                cm.sendOk("Hello #b#h0##k, I'm #p9201001# the fairy of Love.");
+                cm.sendOk("Hello #b#h0##k, I'm Nana the fairy of Love.");
                 cm.dispose();
                 return;
             }

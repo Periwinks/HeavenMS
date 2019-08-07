@@ -36,6 +36,15 @@ var marriageRoom;
 var marriageAction = 0;
 var marriageGifts;
 
+// Bridegroom box, commoner box
+// [id, amount]
+var bgPrizes = [
+    [2022179, 5]
+];
+var cmPrizes = [
+    [2022179, 1]
+];
+
 function start() {
     marriageRoom = cm.getPlayer().getMarriageInstance() != null;
     if (!marriageRoom) {

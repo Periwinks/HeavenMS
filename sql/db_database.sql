@@ -16342,6 +16342,17 @@ CREATE TABLE IF NOT EXISTS `mts_items` (
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 AUTO_INCREMENT=1 ;
 
+CREATE TABLE IF NOT EXISTS `namechanges` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `characterid` int(11) NOT NULL,
+  `old` varchar(13) NOT NULL,
+  `new` varchar(13) NOT NULL,
+  `requestTime` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `completionTime` timestamp NULL,
+  PRIMARY KEY (`id`),
+  INDEX (characterid)
+) ENGINE=InnoDB  DEFAULT CHARSET=latin1 AUTO_INCREMENT=1 ;
+
 CREATE TABLE IF NOT EXISTS `newyear` (
   `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
   `senderid` int(10) NOT NULL DEFAULT '-1',
@@ -17406,7 +17417,7 @@ CREATE TABLE IF NOT EXISTS `reports` (
   `victimid` int(11) NOT NULL,
   `reason` tinyint(4) NOT NULL,
   `chatlog` text NOT NULL,
-  `status` text NOT NULL,
+  `description` text NOT NULL,  # correct field name, thanks resinate
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;
 
@@ -21417,6 +21428,17 @@ CREATE TABLE IF NOT EXISTS `wishlists` (
   `sn` int(11) NOT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 AUTO_INCREMENT=1 ;
+
+CREATE TABLE IF NOT EXISTS `worldtransfers` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `characterid` int(11) NOT NULL,
+  `from` tinyint(3) NOT NULL,
+  `to` tinyint(3) NOT NULL,
+  `requestTime` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `completionTime` timestamp NULL,
+  PRIMARY KEY (`id`),
+  INDEX (characterid)
+) ENGINE=InnoDB  DEFAULT CHARSET=latin1 AUTO_INCREMENT=1 ;
 
 
 ALTER TABLE `dueyitems`

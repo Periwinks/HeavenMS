@@ -59,6 +59,8 @@ public class FilePrinter {
             QUEST_UNCODED = "game/quests/UncodedQuests.txt",
             AUTOSAVING_CHARACTER = "players/SaveCharAuto.txt",
             SAVING_CHARACTER = "players/SaveChar.txt",
+            CHANGE_CHARACTER_NAME = "players/NameChange.txt",
+            WORLD_TRANSFER = "players/WorldTransfer.txt",
             USED_COMMANDS = "commands/UsedCommands.txt",
             DEADLOCK_ERROR = "deadlocks/Deadlocks.txt",
             DEADLOCK_STACK = "deadlocks/Path.txt",
@@ -189,6 +191,42 @@ public class FilePrinter {
                 }
             } catch (IOException ignore) {
                 ignore.printStackTrace();
+            }
+        }
+    }
+    
+    public static void printTODO(final String name, final String s, boolean line) {
+        System.out.printf("log: %s%n%s%n", name, s);
+        
+        FileOutputStream out = null;
+        String file = "logs/todo/" + name;
+        try {
+            File outputFile = new File(file);
+            
+            if (outputFile.getParentFile() != null) {
+                outputFile.getParentFile().mkdirs();
+            }
+            
+            out = new FileOutputStream(file, true);
+            out.write(s.getBytes());
+            
+            if (line) {
+                out.write("\r\n---------------------------------\r\n".getBytes());
+            }
+            
+            out.write("\r\n".getBytes());
+        }
+        catch (IOException e) {
+            e.printStackTrace();
+        }
+        finally {
+            try {
+                if (out != null) {
+                    out.close();
+                }
+            }
+            catch (IOException e) {
+                e.printStackTrace();
             }
         }
     }

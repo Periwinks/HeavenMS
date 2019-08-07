@@ -623,7 +623,7 @@ public final class MTSHandler extends AbstractMaplePacketHandler {
                             equip.setWdef((short) rse.getInt("wdef"));
                             equip.setUpgradeSlots((byte) rse.getInt("upgradeslots"));
                             equip.setLevel((byte) rse.getInt("level"));
-                            equip.setFlag((short) rs.getInt("flag"));
+                            equip.setFlag((short) rse.getInt("flag"));
                             items.add(new MTSItemInfo((Item) equip, rse.getInt("price"), rse.getInt("id"), rse.getInt("seller"), rse.getString("sellername"), rse.getString("sell_ends")));
                         }
                     }
@@ -753,7 +753,7 @@ public final class MTSHandler extends AbstractMaplePacketHandler {
             }
             rs.close();
             ps.close();
-            ps = con.prepareStatement("SELECT COUNT(*) FROM mts_items WHERE tab = ? " + (type != 0 ? "AND type = ?" : "") + "AND transfer = 0");
+            ps = con.prepareStatement("SELECT COUNT(*) FROM mts_items WHERE tab = ? " + (type != 0 ? "AND type = ?" : "") + " AND transfer = 0");
             ps.setInt(1, tab);
             if (type != 0) {
                 ps.setInt(2, type);

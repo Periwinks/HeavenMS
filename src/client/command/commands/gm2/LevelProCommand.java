@@ -39,7 +39,30 @@ public class LevelProCommand extends Command {
             player.yellowMessage("Syntax: !levelpro <newlevel>");
             return;
         }
-        while (player.getLevel() < Math.min(player.getMaxClassLevel(), Integer.parseInt(params[0]))) {
+        
+        if (params.length == 1) {
+            // levelpro <level>
+            int lv = Integer.parseInt(params[0]);
+            
+            levelPro(player, lv);
+        }
+        else {
+            // levelpro <victim> <level>
+            String victimName = params[0];
+            MapleCharacter victim = c.getChannelServer().getPlayerStorage().getCharacterByName(victimName);
+            int lv = Integer.parseInt(params[1]);
+            
+            if (victim != null) {
+                levelPro(victim, lv);
+            }
+            else {
+                player.yellowMessage("Player " + victimName + " cannot be found");
+            }
+        }
+    }
+    
+    private void levelPro(MapleCharacter player, int lv) {
+        while (player.getLevel() < Math.min(player.getMaxClassLevel(), lv)) {
             player.levelUp(false);
         }
     }

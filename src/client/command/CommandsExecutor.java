@@ -105,7 +105,7 @@ public class CommandsExecutor {
         
         client.getPlayer().setLastCommandMessage(splitedMessage[1]);    // thanks Tochi & Nulliphite for noticing string messages being marshalled lowercase
         final String commandName = splitedMessage[0].toLowerCase();
-        final String[] lowercaseParams = splitedMessage[1].toLowerCase().split(splitRegex);
+        final String[] paramSplit = splitedMessage[1].split(splitRegex);
         
         final Command command = registeredCommands.get(commandName);
         if (command == null){
@@ -117,8 +117,8 @@ public class CommandsExecutor {
             return;
         }
         String[] params;
-        if (lowercaseParams.length > 0 && !lowercaseParams[0].isEmpty()) {
-            params = Arrays.copyOfRange(lowercaseParams, 0, lowercaseParams.length);
+        if (paramSplit.length > 0 && !paramSplit[0].isEmpty()) {
+            params = Arrays.copyOfRange(paramSplit, 0, paramSplit.length);
         } else {
             params = new String[]{};
         }
@@ -211,6 +211,8 @@ public class CommandsExecutor {
         addCommand("mylawn", MapOwnerClaimCommand.class);
         addCommand("bosshp", BossHpCommand.class);
         addCommand("mobhp", MobHpCommand.class);
+        addCommand("gachalist", GachaListCommand.class);
+        addCommand("loot", LootCommand.class);
         
         commandsNameDesc.add(levelCommandsCursor);
     }
@@ -264,7 +266,7 @@ public class CommandsExecutor {
         addCommand("job", 2, JobCommand.class);
         addCommand("unbug", 2, UnBugCommand.class);
         addCommand("id", 2, IdCommand.class);
-        addCommand("gachalist", GachaListCommand.class);
+        addCommand("t", 2, TodoCommand.class);
         
         commandsNameDesc.add(levelCommandsCursor);
     }
@@ -304,7 +306,6 @@ public class CommandsExecutor {
         addCommand("maxenergy", 3, MaxEnergyCommand.class);
         addCommand("killall", 3, KillAllCommand.class);
         addCommand("notice", 3, NoticeCommand.class);
-        addCommand("rip", 3, RipCommand.class);
         addCommand("openportal", 3, OpenPortalCommand.class);
         addCommand("closeportal", 3, ClosePortalCommand.class);
         addCommand("pe", 3, PeCommand.class);
@@ -362,6 +363,9 @@ public class CommandsExecutor {
         addCommand("pnpcremove", 4, PnpcRemoveCommand.class);
         addCommand("pmob", 4, PmobCommand.class);
         addCommand("pmobremove", 4, PmobRemoveCommand.class);
+        addCommand("setname", 4, SetNameCommand.class);
+        addCommand("clearinv", 4, ClearInventoryCommand.class);
+        addCommand("copychar", 4, CopyCharCommand.class);
         
         commandsNameDesc.add(levelCommandsCursor);
     }
@@ -375,6 +379,7 @@ public class CommandsExecutor {
         addCommand("showmovelife", 5, ShowMoveLifeCommand.class);
         addCommand("showsessions", 5, ShowSessionsCommand.class);
         addCommand("iplist", 5, IpListCommand.class);
+        addCommand("morph", 5, MorphCommand.class);
         
         commandsNameDesc.add(levelCommandsCursor);
     }

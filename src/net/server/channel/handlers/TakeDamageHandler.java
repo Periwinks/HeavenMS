@@ -196,12 +196,6 @@ public final class TakeDamageHandler extends AbstractMaplePacketHandler {
             chr.getAutobanManager().addMiss();
         }
         
-        //in dojo player cannot use pot, so deadly attacks should be turned off as well
-        if(is_deadly && chr.getMap().isDojoMap() && !ServerConstants.USE_DEADLY_DOJO) {
-            damage = 0;
-            mpattack = 0;
-        }
-        
         if (damage > 0 && !chr.isHidden()) {
             if (attacker != null) {
                 if (damagefrom == -1) {

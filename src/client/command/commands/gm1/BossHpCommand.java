@@ -44,7 +44,7 @@ public class BossHpCommand extends Command {
                     bar += i < percent ? "|" : ".";
                 }
                 bar += "]";
-                player.yellowMessage(monster.getName() + " (" + monster.getId() + ") has " + percent + "% HP left.");
+                player.yellowMessage(String.format("%s (%d): %d%%. %,d/%,d", monster.getName(), monster.getId(), percent, monster.getHp(), monster.getMaxHp()));
                 player.yellowMessage("HP: " + bar);
             }
         }

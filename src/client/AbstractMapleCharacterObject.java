@@ -417,6 +417,10 @@ public abstract class AbstractMapleCharacterObject extends AbstractAnimatedMaple
         changeStatPool(hpMpPool, null, null, -1, silent);
     }
     
+    public void kill() {
+        updateHp(0);
+    }
+    
     public void updateHp(int hp) {
         updateHpMaxHp(hp, Short.MIN_VALUE);
     }
@@ -677,7 +681,7 @@ public abstract class AbstractMapleCharacterObject extends AbstractAnimatedMaple
         }
     }
     
-    protected void updateStrDexIntLuk(int str, int dex, int int_, int luk, int remainingAp) {
+    public void updateStrDexIntLuk(int str, int dex, int int_, int luk, int remainingAp) {
         changeStrDexIntLuk(str, dex, int_, luk, remainingAp, false);
     }
     

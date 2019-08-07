@@ -443,9 +443,6 @@ public class MapleStatEffect {
             } else {
                 if (isMapChair(sourceid)) {
                     addBuffStatPairToListIfNotZero(statups, MapleBuffStat.MAP_CHAIR, 1);
-                } else if ((sourceid == Beginner.NIMBLE_FEET || sourceid == Noblesse.NIMBLE_FEET || sourceid == Evan.NIMBLE_FEET || sourceid == Legend.AGILE_BODY) && ServerConstants.USE_ULTRA_NIMBLE_FEET == true) {
-                    ret.jump = (short) (ret.speed * 4);
-                    ret.speed *= 15;
                 }
             }
 
@@ -472,9 +469,6 @@ public class MapleStatEffect {
 
         int x = MapleDataTool.getInt("x", source, 0);
 
-        if ((sourceid == Beginner.RECOVERY || sourceid == Noblesse.RECOVERY || sourceid == Evan.RECOVERY || sourceid == Legend.RECOVERY) && ServerConstants.USE_ULTRA_RECOVERY == true) {
-            x *= 10;
-        }
         ret.x = x;
         ret.y = MapleDataTool.getInt("y", source, 0);
 
@@ -1340,7 +1334,7 @@ public class MapleStatEffect {
         if (localstatups.size() > 0) {
             byte[] buff = null;
             byte[] mbuff = null;
-            if (getSummonMovementType() == null && this.isActive(applyto)) {
+            if (this.isActive(applyto)) {
                 buff = MaplePacketCreator.giveBuff((skill ? sourceid : -sourceid), localDuration, localstatups);
             }
             if (isDash()) {
@@ -1390,11 +1384,10 @@ public class MapleStatEffect {
             }
 
             if (buff != null) {
-                if (!hasNoIcon()) { //Thanks flav for such a simple release! :)
-                    applyto.announce(buff);
-                } else {
-                    System.out.println("<Error> NO buff icon for id " + sourceid);
-                }
+                //Thanks flav for such a simple release! :)
+                //Thanks Conrad, Atoot for noticing summons not using buff icon
+                
+                applyto.announce(buff);
             }
 
             long starttime = Server.getInstance().getCurrentTime();
@@ -1694,7 +1687,7 @@ public class MapleStatEffect {
     }
 
     public boolean isMorphWithoutAttack() {
-        return morphId > 0 && morphId < 100; // Every morph item I have found has been under 100, pirate skill transforms start at 1000.
+        return morphId > 0 && morphId < 250; // Every morph item I have found has been under 100, pirate skill transforms start at 1000.
     }
 
     private boolean isMist() {
@@ -1818,16 +1811,6 @@ public class MapleStatEffect {
                 return SummonMovementType.FOLLOW;
         }
         return null;
-    }
-
-    public boolean hasNoIcon() {
-        return (sourceid == 3111002 || sourceid == 3211002 || + // puppet, puppet
-                sourceid == 3211005 || + // golden eagle
-                sourceid == 2121005 || sourceid == 2221005 || + // elquines, ifrit
-                sourceid == 2321003 || sourceid == 3121006 || + // bahamut, phoenix
-                sourceid == 3221005 || sourceid == 3111005 || + // frostprey, silver hawk
-                sourceid == 2311006 || sourceid == 5220002 || + // summon dragon, wrath of the octopi
-                sourceid == 5211001 || sourceid == 5211002); // octopus, gaviota
     }
 
     public boolean isSkill() {

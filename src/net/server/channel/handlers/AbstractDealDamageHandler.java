@@ -134,8 +134,9 @@ public abstract class AbstractDealDamageHandler extends AbstractMaplePacketHandl
         }
     }
 
-    protected synchronized void applyAttack(AttackInfo attack, final MapleCharacter player, int attackCount) {
-        if (player.getMap().isOwnershipRestricted(player)) {
+    protected void applyAttack(AttackInfo attack, final MapleCharacter player, int attackCount) {
+        final MapleMap map = player.getMap();
+        if (map.isOwnershipRestricted(player)) {
             return;
         }
         
@@ -150,7 +151,7 @@ public abstract class AbstractDealDamageHandler extends AbstractMaplePacketHandl
                 theSkill = SkillFactory.getSkill(GameConstants.getHiddenSkill(attack.skill)); //returns back the skill id if its not a hidden skill so we are gucci
                 attackEffect = attack.getAttackEffect(player, theSkill);
                 if (attackEffect == null) {
-                    player.getClient().announce(MaplePacketCreator.enableActions());
+                    player.announce(MaplePacketCreator.enableActions());
                     return;
                 }
 
@@ -176,7 +177,7 @@ public abstract class AbstractDealDamageHandler extends AbstractMaplePacketHandl
                             }
                         }
                     } else {
-                        player.getClient().announce(MaplePacketCreator.enableActions());
+                        player.announce(MaplePacketCreator.enableActions());
                     }
                 }
                 
@@ -195,7 +196,6 @@ public abstract class AbstractDealDamageHandler extends AbstractMaplePacketHandl
             }*/
             
             int totDamage = 0;
-            final MapleMap map = player.getMap();
 
             if (attack.skill == ChiefBandit.MESO_EXPLOSION) {
                 int delay = 0;
@@ -266,8 +266,10 @@ public abstract class AbstractDealDamageHandler extends AbstractMaplePacketHandl
                         distanceToDetect += 60000;
                     
                     if (distance > distanceToDetect) {
-                        AutobanFactory.DISTANCE_HACK.alert(player, "Distance Sq to monster: " + distance + " SID: " + attack.skill + " MID: " + monster.getId());
-                        monster.refreshMobPosition();
+                        if (!(player.getMapId() == 270050100 && distance < 769000)) { // Pink Bean Statues
+                            AutobanFactory.DISTANCE_HACK.alert(player, "Distance Sq to monster: " + distance + " SID: " + attack.skill + " MID: " + monster.getId());
+                            monster.refreshMobPosition();
+                        }
                     }
                     
                     int totDamageToOneMonster = 0;
@@ -308,7 +310,7 @@ public abstract class AbstractDealDamageHandler extends AbstractMaplePacketHandl
                                     TimerManager.getInstance().schedule(new Runnable() {
                                         @Override
                                         public void run() {
-                                            player.getMap().spawnMesoDrop(Math.min((int) Math.max(((double) eachdf / (double) 20000) * (double) maxmeso, (double) 1), maxmeso), new Point((int) (monster.getPosition().getX() + Randomizer.nextInt(100) - 50), (int) (monster.getPosition().getY())), monster, player, true, (byte) 2);
+                                            map.spawnMesoDrop(Math.min((int) Math.max(((double) eachdf / (double) 20000) * (double) maxmeso, (double) 1), maxmeso), new Point((int) (monster.getPosition().getX() + Randomizer.nextInt(100) - 50), (int) (monster.getPosition().getY())), monster, player, true, (byte) 2);
                                         }
                                     }, delay);
                                     delay += 100;
@@ -333,7 +335,7 @@ public abstract class AbstractDealDamageHandler extends AbstractMaplePacketHandl
                                     List<MonsterDropEntry> toSteal = new ArrayList<>();
                                     toSteal.add(mi.retrieveDrop(monster.getId()).get(i));
                                     
-                                    player.getMap().dropItemsFromMonster(toSteal, player, monster);
+                                    map.dropItemsFromMonster(toSteal, player, monster);
                                     monster.addStolen(toSteal.get(0).itemId);
                                 }
                             }
@@ -521,7 +523,7 @@ public abstract class AbstractDealDamageHandler extends AbstractMaplePacketHandl
                         
                         map.damageMonster(player, monster, totDamageToOneMonster);
                     }
-                    if (monster.isBuffed(MonsterStatus.WEAPON_REFLECT)) {
+                    if (monster.isBuffed(MonsterStatus.WEAPON_REFLECT) && !attack.magic) {
                         List<Pair<Integer, Integer>> mobSkills = monster.getSkills();
                         
                         for (Pair<Integer, Integer> ms : mobSkills) {
@@ -532,13 +534,14 @@ public abstract class AbstractDealDamageHandler extends AbstractMaplePacketHandl
                             }
                         }
                     }                
-                    if (monster.isBuffed(MonsterStatus.MAGIC_REFLECT)) {
+                    if (monster.isBuffed(MonsterStatus.MAGIC_REFLECT) && attack.magic) {
                         List<Pair<Integer, Integer>> mobSkills = monster.getSkills();
                         
                         for (Pair<Integer, Integer> ms : mobSkills) {
                             if (ms.left == 145) {
                                 MobSkill toUse = MobSkillFactory.getMobSkill(ms.left, ms.right);
-                                player.addMP(-toUse.getY());
+                                player.addHP(-toUse.getY());
+                                map.broadcastMessage(player, MaplePacketCreator.damagePlayer(0, monster.getId(), player.getId(), toUse.getY(), 0, 0, false, 0, true, monster.getObjectId(), 0, 0), true);
                             }
                         }
                     }
@@ -861,10 +864,11 @@ public abstract class AbstractDealDamageHandler extends AbstractMaplePacketHandl
                                     hitDmgMax *= 0.5;
                             }
                     }
+                    
+                    boolean isSnipe = ret.skill == Marksman.SNIPE;
 
-                    if(ret.skill == Marksman.SNIPE) {
-                            damage = 195000 + Randomizer.nextInt(5000);
-                            hitDmgMax = 200000;
+                    if(isSnipe) {
+                        damage = getSnipeDamage(chr);
                     } else if (ret.skill == Beginner.BAMBOO_RAIN || ret.skill == Noblesse.BAMBOO_RAIN || ret.skill == Evan.BAMBOO_THRUST || ret.skill == Legend.BAMBOO_THRUST) {
                         hitDmgMax = 82569000; // 30% of Max HP of strongest Dojo boss
                     }
@@ -873,17 +877,20 @@ public abstract class AbstractDealDamageHandler extends AbstractMaplePacketHandl
                     if(canCrit) // They can crit, so up the max.
                             maxWithCrit *= 2;
 
-                    // Warn if the damage is over 1.5x what we calculated above.
-                    if(damage > maxWithCrit * 1.5) {
-                        AutobanFactory.DAMAGE_HACK.alert(chr, "DMG: " + damage + " MaxDMG: " + maxWithCrit + " SID: " + ret.skill + " MobID: " + (monster != null ? monster.getId() : "null") + " Map: " + chr.getMap().getMapName() + " (" + chr.getMapId() + ")");
-                    }
+                    // Remove warning for snipe calculations done serverside
+                    if (!isSnipe) {
+                        // Warn if the damage is over 1.5x what we calculated above.
+                        if(damage > maxWithCrit * 1.5) {
+                            AutobanFactory.DAMAGE_HACK.alert(chr, "DMG: " + damage + " MaxDMG: " + maxWithCrit + " SID: " + ret.skill + " MobID: " + (monster != null ? monster.getId() : "null") + " Map: " + chr.getMap().getMapName() + " (" + chr.getMapId() + ")");
+                        }
 
-                    // Add a ab point if its over 5x what we calculated.
-                    if(damage > maxWithCrit  * 5) {
-                            AutobanFactory.DAMAGE_HACK.addPoint(chr.getAutobanManager(), "DMG: " + damage + " MaxDMG: " + maxWithCrit + " SID: " + ret.skill + " MobID: " + (monster != null ? monster.getId() : "null") + " Map: " + chr.getMap().getMapName() + " (" + chr.getMapId() + ")");
+                        // Add a ab point if its over 5x what we calculated.
+                        if(damage > maxWithCrit  * 5) {
+                                AutobanFactory.DAMAGE_HACK.addPoint(chr.getAutobanManager(), "DMG: " + damage + " MaxDMG: " + maxWithCrit + " SID: " + ret.skill + " MobID: " + (monster != null ? monster.getId() : "null") + " Map: " + chr.getMap().getMapName() + " (" + chr.getMapId() + ")");
+                        }
                     }
-
-                    if (ret.skill == Marksman.SNIPE || (canCrit && damage > hitDmgMax)) {
+                    
+                    if (isSnipe || (canCrit && damage > hitDmgMax)) {
                             // If the skill is a crit, inverse the damage to make it show up on clients.
                             damage = -Integer.MAX_VALUE + damage - 1;
                     }
@@ -904,5 +911,30 @@ public abstract class AbstractDealDamageHandler extends AbstractMaplePacketHandl
 
     private static int rand(int l, int u) {
         return (int) ((Math.random() * (u - l + 1)) + l);
+    }
+    
+    private static int getSnipeDamage(MapleCharacter player) {
+        // Weapon attack modifier
+        final int snipeLv = player.getSkillLevel(Marksman.SNIPE);
+        final int masteryLv = player.getSkillLevel(Marksman.MARKSMAN_BOOST);
+        final int modLv = player.getLevel() - 120;
+        final int watkAmount = player.getTotalWatk();
+        int wa = watkAmount + (modLv) + (snipeLv * 3);
+        
+        // Remember that there is a 3.4 crit that isn't being calculated in
+        // Note that snipe level 1 should be better than maxed SE strafe crit... (340% vanilla per 1 arrow)
+        final int basePercent = 240; // Level 0
+        final int percentPerLv = 3;
+        int pc = basePercent + (snipeLv * percentPerLv); // Skill %
+        
+        // Should never be a # geq 1
+        final double baseMastery = .47;
+        final double masteryPerSnipeLv = .005; // 30 * .005 = .15
+        final double masteryPerMMBLv = .01; // 30 * .01 = .30
+        double mastery = baseMastery + (snipeLv * masteryPerSnipeLv) + (masteryLv * masteryPerMMBLv);
+        
+        // The actual damage calculations
+        int max = player.calculateMaxBaseDamage(wa) * pc / 100;
+        return (int) Math.floor(max * ((Math.random() * (1 - mastery)) + (mastery))); // hooray
     }
 }

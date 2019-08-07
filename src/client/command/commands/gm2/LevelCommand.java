@@ -40,14 +40,33 @@ public class LevelCommand extends Command {
             player.yellowMessage("Syntax: !level <newlevel>");
             return;
         }
-
+        
+        if (params.length == 1) {
+            // level <level>
+            int lv = Integer.parseInt(params[0]);
+            level(player, lv);
+        }
+        else {
+            // level <target> <level>
+            String victimName = params[0];
+            int lv = Integer.parseInt(params[1]);
+            MapleCharacter victim = c.getChannelServer().getPlayerStorage().getCharacterByName(victimName);
+            
+            if (victim != null) {
+                level(victim, lv);
+            }
+            else {
+                player.yellowMessage("Player " + victimName + " could not be found");
+            }
+        }
+    }
+    
+    private void level(MapleCharacter player, int newLevel) {
         player.loseExp(player.getExp(), false, false);
-        player.setLevel(Math.min(Integer.parseInt(params[0]), player.getMaxClassLevel()) - 1);
-
+        player.setLevel(Math.min(newLevel, player.getMaxClassLevel()) - 1);
         player.resetPlayerRates();
         if (ServerConstants.USE_ADD_RATES_BY_LEVEL) player.setPlayerRates();
         player.setWorldRates();
-
         player.levelUp(false);
     }
 }

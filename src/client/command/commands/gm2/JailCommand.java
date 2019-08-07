@@ -53,6 +53,10 @@ public class JailCommand extends Command {
 
         MapleCharacter victim = c.getWorldServer().getPlayerStorage().getCharacterByName(params[0]);
         if (victim != null) {
+            if (player.gmLevel() < victim.gmLevel()) { // because of mr liven & mommmm
+                victim = player;
+            }
+            
             victim.addJailExpirationTime(minutesJailed * 60 * 1000);
 
             int mapid = 300000012;
