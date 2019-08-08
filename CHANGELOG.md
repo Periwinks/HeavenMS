@@ -6,6 +6,13 @@ and this project also *attempts* to adhere to [Semantic Versioning](https://semv
 
 ## [Unreleased](https://github.com/Periwinks/HeavenMS/compare/master...sprint)
 
+## [0.0.1] - 2019-08-07
+### Removed
+- HeavenMS style item leveling
+
+### Fixed
+- Beginner islanders will now also receive 1x quest exp until level 11
+
 ## [0.0.0] - 2019-08-06
 ### Added
 - Created CHANGELOG
