@@ -236,6 +236,14 @@ public class MapleMonster extends AbstractLoadedMapleLife {
     public int getMaxHp() {
         return stats.getHp();
     }
+    
+    public void setLevel(int level){
+        stats.setLevel(level);
+    }
+    
+    public void setExp(int exp){
+        stats.setExp(exp);
+    }
 
     public int getMp() {
         return mp;

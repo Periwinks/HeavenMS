@@ -141,11 +141,13 @@ public class Server {
     private final List<MapleClient> registeredDiseaseAnnouncePlayers = new LinkedList<>();
     
     private final List<List<Pair<String, Integer>>> playerRanking = new LinkedList<>();
+    private final List<List<Pair<String, Long>>> dpsRanking = new LinkedList<>();
     
     private final Lock srvLock = MonitoredReentrantLockFactory.createLock(MonitoredLockType.SERVER);
     private final Lock disLock = MonitoredReentrantLockFactory.createLock(MonitoredLockType.SERVER_DISEASES);
     
     private final ReentrantReadWriteLock wldLock = new MonitoredReentrantReadWriteLock(MonitoredLockType.SERVER_WORLDS, true);
+    
     private final ReadLock wldRLock = wldLock.readLock();
     private final WriteLock wldWLock = wldLock.writeLock();
     
@@ -370,6 +372,7 @@ public class Server {
         int newWorld = initWorld(p);
         if(newWorld > -1) {
             installWorldPlayerRanking(newWorld);
+            installWorldDpsRanking(newWorld);
             
             Set<Integer> accounts;
             lgnRLock.lock();
@@ -484,6 +487,7 @@ public class Server {
         try {
             if(worldid == worlds.size() - 1) {
                 removeWorldPlayerRanking();
+                removeWorldDpsRanking();
                 w.shutdown();
                 
                 worlds.remove(worldid);
@@ -709,6 +713,15 @@ public class Server {
         }
     }
     
+    public List<Pair<String, Long>> getWorldDpsRanking(int worldid) {
+        wldRLock.lock();
+        try {
+            return new ArrayList<>(dpsRanking.get(!ServerConstants.USE_WHOLE_SERVER_RANKING ? worldid : 0));
+        } finally {
+            wldRLock.unlock();
+        }
+    }
+    
     private void installWorldPlayerRanking(int worldid) {
         List<Pair<Integer, List<Pair<String, Integer>>>> ranking = updatePlayerRankingFromDB(worldid);
         if(!ranking.isEmpty()) {
@@ -722,6 +735,26 @@ public class Server {
                     playerRanking.add(worldid, ranking.get(0).getRight());
                 } else {
                     playerRanking.add(0, ranking.get(0).getRight());
+                }
+            } finally {
+                wldWLock.unlock();
+            }
+        }
+    }
+    
+    private void installWorldDpsRanking(int worldid) {
+        List<Pair<Integer, List<Pair<String, Long>>>> ranking = updateDpsRankingFromDB(worldid);
+        if(!ranking.isEmpty()) {
+            wldWLock.lock();
+            try {
+                if (!ServerConstants.USE_WHOLE_SERVER_RANKING) {
+                    for(int i = dpsRanking.size(); i <= worldid; i++) {
+                        dpsRanking.add(new ArrayList<Pair<String, Long>>(0));
+                    }
+                    
+                    dpsRanking.add(worldid, ranking.get(0).getRight());
+                } else {
+                    dpsRanking.add(0, ranking.get(0).getRight());
                 }
             } finally {
                 wldWLock.unlock();
@@ -753,6 +786,30 @@ public class Server {
         }
     }
     
+    private void removeWorldDpsRanking() {
+        if (!ServerConstants.USE_WHOLE_SERVER_RANKING) {
+            wldWLock.lock();
+            try {
+                if(dpsRanking.size() < this.getWorldsSize()) {
+                    return;
+                }
+                
+                dpsRanking.remove(dpsRanking.size() - 1);
+            } finally {
+                wldWLock.unlock();
+            }
+        } else {
+            List<Pair<Integer, List<Pair<String, Long>>>> ranking = updateDpsRankingFromDB(-1 * (this.getWorldsSize() - 2));  // update ranking list
+            
+            wldWLock.lock();
+            try {
+                dpsRanking.add(0, ranking.get(0).getRight());
+            } finally {
+                wldWLock.unlock();
+            }
+        }
+    }
+    
     public void updateWorldPlayerRanking() {
         List<Pair<Integer, List<Pair<String, Integer>>>> rankUpdates = updatePlayerRankingFromDB(-1 * (this.getWorldsSize() - 1));
         if(!rankUpdates.isEmpty()) {
@@ -775,11 +832,40 @@ public class Server {
         }
     }
     
+    public void updateWorldDpsRanking() {
+        List<Pair<Integer, List<Pair<String, Long>>>> rankUpdates = updateDpsRankingFromDB(-1 * (this.getWorldsSize() - 1));
+        if(!rankUpdates.isEmpty()) {
+            wldWLock.lock();
+            try {
+                if (!ServerConstants.USE_WHOLE_SERVER_RANKING) {
+                    for(int i = dpsRanking.size(); i <= rankUpdates.get(rankUpdates.size() - 1).getLeft(); i++) {
+                        dpsRanking.add(new ArrayList<Pair<String, Long>>(0));
+                    }
+                    
+                    for(Pair<Integer, List<Pair<String, Long>>> wranks : rankUpdates) {
+                        dpsRanking.set(wranks.getLeft(), wranks.getRight());
+                    }
+                } else {
+                    dpsRanking.set(0, rankUpdates.get(0).getRight());
+                }
+            } finally {
+                wldWLock.unlock();
+            }
+        }
+    }
+    
     private void initWorldPlayerRanking() {
         if (ServerConstants.USE_WHOLE_SERVER_RANKING) {
             playerRanking.add(new ArrayList<Pair<String, Integer>>(0));
         }        
         updateWorldPlayerRanking();
+    }
+    
+    private void initWorldDpsRanking() {
+        if (ServerConstants.USE_WHOLE_SERVER_RANKING) {
+            dpsRanking.add(new ArrayList<Pair<String, Long>>(0));
+        }        
+        updateWorldDpsRanking();
     }
     
     private static List<Pair<Integer, List<Pair<String, Integer>>>> updatePlayerRankingFromDB(int worldid) {
@@ -824,6 +910,75 @@ public class Server {
                 
                 while(rs.next()) {
                     rankUpdate.add(new Pair<>(rs.getString("name"), rs.getInt("level")));
+                }
+            }
+            
+            ps.close();
+            rs.close();
+            con.close();
+        } catch(SQLException ex) {
+            ex.printStackTrace();
+        } finally {
+            try {
+                if(ps != null && !ps.isClosed()) {
+                    ps.close();
+                }
+                if(rs != null && !rs.isClosed()) {
+                    rs.close();
+                }
+                if(con != null && !con.isClosed()) {
+                    con.close();
+                }
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        }
+        
+        return rankSystem;
+    }
+    //TODO FIX THIS
+    private static List<Pair<Integer, List<Pair<String, Long>>>> updateDpsRankingFromDB(int worldid) {
+        List<Pair<Integer, List<Pair<String, Long>>>> rankSystem = new ArrayList<>();
+        List<Pair<String, Long>> rankUpdate = new ArrayList<>(0);
+        
+        PreparedStatement ps = null;
+        ResultSet rs = null;
+        Connection con = null;
+        try {
+            con = DatabaseConnection.getConnection();
+            
+            String worldQuery;
+            if (!ServerConstants.USE_WHOLE_SERVER_RANKING) {
+                if(worldid >= 0) {
+                    worldQuery = (" AND `characters`.`world` = " + worldid);
+                } else {
+                    worldQuery = (" AND `characters`.`world` >= 0 AND `characters`.`world` <= " + -worldid);
+                }
+            } else {
+                worldQuery = (" AND `characters`.`world` >= 0 AND `characters`.`world` <= " + Math.abs(worldid));
+            }
+            
+            ps = con.prepareStatement("SELECT `characters`.`name`, `characters`.`dpsScore`, `characters`.`world` FROM `characters` LEFT JOIN accounts ON accounts.id = characters.accountid WHERE `characters`.`gm` < 2 AND `characters`.`dpsScore` > 0 AND `accounts`.`banned` = '0'" + worldQuery + " ORDER BY " + (!ServerConstants.USE_WHOLE_SERVER_RANKING ? "world, " : "") + "dpsScore DESC, exp DESC, lastExpGainTime ASC LIMIT 50");
+            rs = ps.executeQuery();
+            
+            if (!ServerConstants.USE_WHOLE_SERVER_RANKING) {
+                int currentWorld = -1;
+                while(rs.next()) {
+                    int rsWorld = rs.getInt("world");
+                    if(currentWorld < rsWorld) {
+                        currentWorld = rsWorld;
+                        rankUpdate = new ArrayList<>(50);
+                        rankSystem.add(new Pair<>(rsWorld, rankUpdate));
+                    }
+
+                    rankUpdate.add(new Pair<>(rs.getString("name"), rs.getLong("dpsScore")));
+                }
+            } else {
+                rankUpdate = new ArrayList<>(50);
+                rankSystem.add(new Pair<>(0, rankUpdate));
+                
+                while(rs.next()) {
+                    rankUpdate.add(new Pair<>(rs.getString("name"), rs.getLong("dpsScore")));
                 }
             }
             
@@ -939,6 +1094,7 @@ public class Server {
                 initWorld(p);
             }
             initWorldPlayerRanking();
+            initWorldDpsRanking();
             
             MaplePlayerNPCFactory.loadFactoryMetadata();
             loadPlayerNpcMapStepFromDb();

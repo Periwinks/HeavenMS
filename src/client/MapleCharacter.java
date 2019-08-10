@@ -328,6 +328,7 @@ public class MapleCharacter extends AbstractMapleCharacterObject {
     private int banishSp = -1;
     private long banishTime = 0;
     private long lastExpGainTime;
+    private long dpsScore = 0;
     private boolean pendingNameChange; //only used to change name on logout, not to be relied upon elsewhere
     
     private MapleCharacter() {
@@ -635,6 +636,14 @@ public class MapleCharacter extends AbstractMapleCharacterObject {
     
     public int getPartnerId() {
         return partnerId;
+    }
+    
+    public long getDpsScore(){
+        return dpsScore;
+    }
+    
+    public void setDpsScore(long score){
+        dpsScore = score;
     }
     
     public void setPartnerId(int partnerid) {
@@ -6872,6 +6881,7 @@ public class MapleCharacter extends AbstractMapleCharacterObject {
         ret.rankMove = this.getRankMove();
         ret.jobRank = this.getJobRank();
         ret.jobRankMove = this.getJobRankMove();
+        ret.dpsScore = this.getDpsScore();
         
         return ret;
     }
@@ -6971,6 +6981,7 @@ public class MapleCharacter extends AbstractMapleCharacterObject {
             ret.buddylist = new BuddyList(buddyCapacity);
             ret.lastExpGainTime = rs.getTimestamp("lastExpGainTime").getTime();
             ret.canRecvPartySearchInvite = rs.getBoolean("partySearch");
+            ret.dpsScore = rs.getLong("dpsScore");
             
             ret.getInventory(MapleInventoryType.EQUIP).setSlotLimit(rs.getByte("equipslots"));
             ret.getInventory(MapleInventoryType.USE).setSlotLimit(rs.getByte("useslots"));

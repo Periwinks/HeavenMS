@@ -42,6 +42,8 @@ import java.util.List;
 import java.util.Arrays;
 import java.util.Calendar;
 import java.util.HashMap;
+import java.util.Timer;
+import java.util.TimerTask;
 
 public class CommandsExecutor {
     
@@ -65,6 +67,7 @@ public class CommandsExecutor {
     private HashMap<String, Command> registeredCommands = new HashMap<>();
     private Pair<List<String>, List<String>> levelCommandsCursor;
     private List<Pair<List<String>, List<String>>> commandsNameDesc = new ArrayList<>();
+    public boolean allowCommand = true;
 
     private CommandsExecutor(){
         registerLv0Commands();
@@ -116,6 +119,23 @@ public class CommandsExecutor {
             client.getPlayer().yellowMessage("You do not have permission to use this command.");
             return;
         }
+        if(command.getTimer() > 0){
+            if(allowCommand){
+                this.allowCommand = false;
+                
+                Timer timeSchedular = new Timer();
+                timeSchedular.schedule(new TimerTask(){
+                    @Override
+                    public void run(){
+                        allowCommand = true;
+                    }
+                }, command.getTimer()*1000);
+            }else{
+                client.getPlayer().yellowMessage("Please wait until the timer is done counting down");
+                return;
+            }
+        }
+        
         String[] params;
         if (paramSplit.length > 0 && !paramSplit[0].isEmpty()) {
             params = Arrays.copyOfRange(paramSplit, 0, paramSplit.length);
@@ -179,11 +199,42 @@ public class CommandsExecutor {
             e.printStackTrace();
         }
     }
+    
+    private void addCommandWithTimer(String syntax,  Class<? extends Command> commandClass, int timer){
+        addCommandWithTimer(syntax, 0, commandClass, timer);
+    }
+    
+    private void addCommandWithTimer(String syntax, int rank,  Class<? extends Command> commandClass, int timer){
+        if (registeredCommands.containsKey(syntax.toLowerCase())){
+            System.out.println("Error on register command with name: " + syntax + ". Already exists.");
+            return;
+        }else if(!allowCommand){
+            System.out.println("Error on register command with name: " + syntax + ". Player should wait before doing this command again.");
+            return;
+        }
+
+        String commandName = syntax.toLowerCase();
+        addCommandInfo(commandName, commandClass);
+        
+        try {
+            Command commandInstance = commandClass.newInstance();     // thanks Halcyon for noticing commands getting reinstanced every call
+            commandInstance.setRank(rank);
+            commandInstance.setTimer(timer);
+            
+            registeredCommands.put(commandName, commandInstance);
+        } catch (InstantiationException e) {
+            e.printStackTrace();
+        } catch (IllegalAccessException e) {
+            e.printStackTrace();
+        }
+    }
+
 
     private void registerLv0Commands(){
         levelCommandsCursor = new Pair<>((List<String>) new ArrayList<String>(), (List<String>) new ArrayList<String>());
         
         addCommand(new String[]{"help", "commands"}, HelpCommand.class);
+        addCommand("dpsranks", DPSRanks.class);
         addCommand("droplimit", DropLimitCommand.class);
         addCommand("time", TimeCommand.class);
         addCommand("credits", StaffCommand.class);
@@ -213,6 +264,7 @@ public class CommandsExecutor {
         addCommand("mobhp", MobHpCommand.class);
         addCommand("gachalist", GachaListCommand.class);
         addCommand("loot", LootCommand.class);
+        addCommandWithTimer("dps", DPSCommand.class, 60);
         
         commandsNameDesc.add(levelCommandsCursor);
     }

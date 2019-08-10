@@ -29,6 +29,7 @@ public abstract class Command {
 
     protected int rank;
     protected String description;
+    protected int timer;
 
     public abstract void execute(MapleClient client, String[] params);
 
@@ -46,6 +47,14 @@ public abstract class Command {
 
     public void setRank(int rank) {
         this.rank = rank;
+    }
+    
+    public int getTimer(){
+        return timer;
+    }
+    
+    public void setTimer(int timer){
+        this.timer = timer;
     }
 
     protected String joinStringFrom(String arr[], int start) {

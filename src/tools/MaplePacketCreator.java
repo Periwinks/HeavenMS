@@ -4761,6 +4761,28 @@ public class MaplePacketCreator {
                 }
                 return mplew.getPacket();
         }
+        
+        
+        public static byte[] showDpsRanks(int npcid, List<Pair<String, Long>> dpsRanking){
+            final MaplePacketLittleEndianWriter mplew = new MaplePacketLittleEndianWriter();
+                mplew.writeShort(SendOpcode.GUILD_OPERATION.getValue());
+                mplew.write(0x49);
+                mplew.writeInt(npcid);
+                if (dpsRanking.isEmpty()) { 
+                        mplew.writeInt(0);
+                        return mplew.getPacket();
+                }
+                mplew.writeInt(dpsRanking.size());
+                for (Pair<String, Long> dr : dpsRanking) {
+                        mplew.writeMapleAsciiString(dr.getLeft());
+                        mplew.writeInt(dr.getRight().intValue());
+                        mplew.writeInt(0);
+                        mplew.writeInt(0);
+                        mplew.writeInt(0);
+                        mplew.writeInt(0);
+                }
+                return mplew.getPacket();
+        }
 
         public static byte[] updateGP(int gid, int GP) {
                 final MaplePacketLittleEndianWriter mplew = new MaplePacketLittleEndianWriter();
