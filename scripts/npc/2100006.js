@@ -8,8 +8,9 @@
 
 var status = 0;
 var beauty = 0;
-var mhair_v = Array(30150, 30170, 30180, 30320, 30330, 30410, 30460, 30820, 30900);
-var fhair_v = Array(31040, 31090, 31190, 31330, 31340, 31400, 31420, 31620, 31660);
+var hair = Array();
+var hairprice = 5000000;
+var haircolorprice = 5000000;
 var hairnew = Array();
 
 function pushIfItemExists(array, itemid) {
@@ -37,18 +38,9 @@ function action(mode, type, selection) {
 			if (selection == 0) {
 				beauty = 1;
 				hairnew = Array();
-				if (cm.getChar().getGender() == 0) {
-					for(var i = 0; i < mhair_v.length; i++) {
-						pushIfItemExists(hairnew, mhair_v[i] + parseInt(cm.getChar().getHair()
- % 10));
-					}
-				} 
-				if (cm.getChar().getGender() == 1) {
-					for(var i = 0; i < fhair_v.length; i++) {
-						pushIfItemExists(hairnew, fhair_v[i] + parseInt(cm.getChar().getHair()
- % 10));
-					}
-				}
+				hair = cm.getHairIds(260000000);
+                for (var i = 0; i < hair.length; i++)
+                    pushIfItemExists(hairnew, hair[i] + parseInt(cm.getPlayer().getHair() % 10));
 				cm.sendStyle("Hahaha~all you need is #bAriant hair style coupon(VIP)#k to change up your hairstyle. Choose the new style, and let me do the rest.", hairnew);
 			} else if (selection == 1) {
 				beauty = 2;

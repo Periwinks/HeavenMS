@@ -29,12 +29,7 @@
 
 var status = 0;
 
-var mhair_r = Array(30010, 30070, 30080, 30090, 30100, 30690, 30760, 33000);
-var fhair_r = Array(31130, 31530, 31820, 31920, 31940, 34000, 34030);
-
-var mhair_v = Array(30010, 30070, 30080, 30090, 30100, 30480, 30560, 30690, 30760, 30850, 30890, 30930, 30950);
-var fhair_v = Array(31020, 31130, 31510, 31530, 31820, 31860, 31890, 31920, 31940, 31950, 34000);
-
+var hair = Array();
 var hairnew = Array();
 
 function pushIfItemExists(array, itemid) {
@@ -66,16 +61,9 @@ function action(mode, type, selection) {
                 beauty = 2;
                 
                 hairnew = Array();
-                if (cm.getPlayer().getGender() == 0) {
-                    for(var i = 0; i < mhair_v.length; i++) {
-                        pushIfItemExists(hairnew, mhair_v[i] + parseInt(cm.getPlayer().getHair() % 10));
-                    }
-                }
-                else {
-                    for(var i = 0; i < fhair_v.length; i++) {
-                        pushIfItemExists(hairnew, fhair_v[i] + parseInt(cm.getPlayer().getHair() % 10));
-                    }
-                }
+                hair = cm.getRoyalHairIds();
+                for (var i = 0; i < hair.length; i++)
+                    pushIfItemExists(hairnew, hair[i] + parseInt(cm.getPlayer().getHair() % 10));
                 
                 cm.sendStyle("Using the SPECIAL coupon you can choose the style your hair will become. Pick the style that best provides you delight...", hairnew);
             }

@@ -28,8 +28,7 @@ var status = 0;
 var beauty = 0;
 var hairprice = 1000000;
 var haircolorprice = 1000000;
-var mhair_v = Array(30250, 30490, 30730, 30870, 30880, 33100);
-var fhair_v = Array(31320, 31450, 31560, 31730, 31830);
+var hair = Array();
 var hairnew = Array();
 
 function pushIfItemExists(array, itemid) {
@@ -54,12 +53,9 @@ function action(mode, type, selection) {
             if (selection == 1) {
                 beauty = 1;
                 hairnew = Array();
-                if (cm.getPlayer().getGender() == 0)
-                    for(var i = 0; i < mhair_v.length; i++)
-                        pushIfItemExists(hairnew, mhair_v[i] + parseInt(cm.getPlayer().getHair()% 10));
-                if (cm.getPlayer().getGender() == 1)
-                    for(var i = 0; i < fhair_v.length; i++)
-                        pushIfItemExists(hairnew, fhair_v[i] + parseInt(cm.getPlayer().getHair() % 10));
+                hair = cm.getHairIds(600000001);
+                for (var i = 0; i < hair.length; i++)
+                    pushIfItemExists(hairnew, hair[i] + parseInt(cm.getPlayer().getHair() % 10));
                 cm.sendStyle("I can totally change up your hairstyle and make it look so good. Why don't you change it up a bit? With #b#t5150031##k, I'll take care of the rest for you. Choose the style of your liking!", hairnew);
             } else if (selection == 2) {
                 beauty = 2;

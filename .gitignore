@@ -1,6 +1,9 @@
 ﻿/logs/**
 .idea/
 
+# secretly sad files
+MapleSalon.java
+
 # build files
 
 /build/

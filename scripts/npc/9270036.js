@@ -27,8 +27,7 @@
 */
 var status = 0;
 var beauty = 0;
-var mhair_v = Array(30000, 30020, 30110, 30120, 30270, 30290, 30310, 30670, 30840);
-var fhair_v = Array(31010, 31050, 31110, 31120, 31240, 31250, 31280, 31670, 31810);
+var hair = Array();
 var hairnew = Array();
 
 function pushIfItemExists(array, itemid) {
@@ -49,12 +48,9 @@ function action(mode, type, selection) {
         if (selection == 1) {
             beauty = 1;
             hairnew = Array();
-            if (cm.getPlayer().getGender() == 0)
-                for(var i = 0; i < mhair_v.length; i++)
-                    pushIfItemExists(hairnew, mhair_v[i] + parseInt(cm.getPlayer().getHair()% 10));
-            else
-                for(var i = 0; i < fhair_v.length; i++)
-                    pushIfItemExists(hairnew, fhair_v[i] + parseInt(cm.getPlayer().getHair()% 10));
+            hair = cm.getHairIds(540000000);
+            for (var i = 0; i < hair.length; i++)
+                pushIfItemExists(hairnew, hair[i] + parseInt(cm.getPlayer().getHair() % 10));
             cm.sendStyle("I can completely change the look of your hair. Aren't you ready for a change? With #b#t5150033##k, I'll take care of the rest for you. Choose the style of your liking!", hairnew);
         } else if (selection == 2) {
             beauty = 2;
