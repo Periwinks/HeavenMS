@@ -4214,7 +4214,6 @@ public class MapleMap {
         
         if (owner != null) {
             if (owner != chr && !owner.isPartyMember(chr)) {    // thanks Vcoc & BHB for suggesting the map ownership feature
-                chr.showMapOwnershipInfo(owner);
                 return true;
             } else {
                 this.refreshOwnership();
@@ -4226,11 +4225,15 @@ public class MapleMap {
     
     public void checkMapOwnerActivity() {
         long timeNow = Server.getInstance().getCurrentTime();
-        if (timeNow - mapOwnerLastActivityTime > 60000) {
+        if (timeNow - mapOwnerLastActivityTime > 60000 || !mapOwner.isLoggedin()) {
             if (unclaimOwnership(mapOwner)) {
-                this.dropMessage(5, "This lawn is now free real estate.");
+                this.dropMessage(5, "Due to owner inactivity, this map is now free to claim using the @mapowner command.");
             }
         }
+    }
+    
+    public MapleCharacter getMapOwner() {
+        return mapOwner;
     }
     
     private final List<Point> takenSpawns = new LinkedList<>();

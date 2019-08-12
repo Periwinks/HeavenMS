@@ -31,7 +31,7 @@ import server.maps.MapleMap;
 
 public class MapOwnerClaimCommand extends Command {
     {
-        setDescription("");
+        setDescription("Claim or release a map as a measure of preventing killstealing");
     }
 
     @Override
@@ -45,23 +45,25 @@ public class MapOwnerClaimCommand extends Command {
                         MapleMap ownedMap = chr.getOwnedMap();  // thanks Conrad for suggesting not unlease a map as soon as player exits it
                         if (ownedMap != null) {
                             ownedMap.unclaimOwnership(chr);
+                            ownedMap.dropMessage(5, chr.getName() + " has manually forfeit the map. Use @mapowner to claim the map.");
                             
                             if (chr.getMap() == ownedMap) {
-                                chr.dropMessage(5, "This lawn is now free real estate.");
+                                chr.dropMessage(5, "You forfeit ownership of the map. If this was a mistake, use @mapowner to reclaim it.");
                                 return;
                             }
                         }
                         
                         if (chr.getMap().claimOwnership(chr)) {
-                            chr.dropMessage(5, "You have leased this lawn for a while, until you leave here or after 1 minute of inactivity.");
+                            chr.dropMessage(5, "You have claimed this map until 1 minute of inactivity within the map.");
                         } else {
-                            chr.dropMessage(5, "This lawn has already been leased by a player.");
+                            // mapowner is not null
+                            chr.dropMessage(5, chr.getMap().getMapOwner().getName() + " has already claimed this map.");
                         }
                     } else {
-                        chr.dropMessage(5, "This lawn cannot be leased.");
+                        chr.dropMessage(5, "Event instance maps cannot be claimed.");
                     }
                 } else {
-                    chr.dropMessage(5, "Feature unavailable.");
+                    chr.dropMessage(5, "Mapowner command feature unavailable.");
                 }
             } finally {
                 c.releaseClient();
