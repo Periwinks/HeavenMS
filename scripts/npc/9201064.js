@@ -53,7 +53,7 @@ function action(mode, type, selection) {
             if (selection == 1) {
                 beauty = 1;
                 hairnew = Array();
-                hair = cm.getHairIds(600000001);
+                hair = cm.getHairIds(false, 600000001);
                 for (var i = 0; i < hair.length; i++)
                     pushIfItemExists(hairnew, hair[i] + parseInt(cm.getPlayer().getHair() % 10));
                 cm.sendStyle("I can totally change up your hairstyle and make it look so good. Why don't you change it up a bit? With #b#t5150031##k, I'll take care of the rest for you. Choose the style of your liking!", hairnew);

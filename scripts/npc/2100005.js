@@ -40,7 +40,7 @@ function action(mode, type, selection) {
 			if (selection == 0) {
 				beauty = 1;
 				hairnew = Array();
-				hair = cm.getHairIds(260000000);
+				hair = cm.getHairIds(true, 260000000);
                 for (var i = 0; i < hair.length; i++)
                     pushIfItemExists(hairnew, hair[i] + parseInt(cm.getPlayer().getHair() % 10));
 				cm.sendYesNo("If you use the REG coupon, your hairstyle will be changed to a random new look. You'll also have access to new hairstyles I worked on that's not available for VIP coupons. Would you like to use #bAriant hair style coupon(REG)#k for a fabulous new look?");

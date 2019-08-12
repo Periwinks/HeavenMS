@@ -43,8 +43,6 @@ function pushIfItemExists(array, itemid) {
 }
 
 function action(mode, type, selection) {
-    var hair = cm.getHairIds(100000104);
-    
     if (mode < 1) {
         cm.dispose();
     } else {
@@ -54,7 +52,7 @@ function action(mode, type, selection) {
         else if (status == 1) {
             if (selection == 1) {
                 beauty = 1;
-                hair = cm.getHairIds(100000104);
+                hair = cm.getHairIds(false, 100000104);
                 hairnew = Array();
                 for (var i = 0; i < hair.length; i++)
                     pushIfItemExists(hairnew, hair[i] + parseInt(cm.getPlayer().getHair() % 10));

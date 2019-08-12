@@ -55,14 +55,14 @@ function action(mode, type, selection) {
             if (selection == 0) {
                 beauty = 3;
                 hairnew = Array();
-                hair = cm.getHairIds(103000005);
+                hair = cm.getHairIds(true, 103000005);
                 for (var i = 0; i < hair.length; i++)
                     pushIfItemExists(hairnew, hair[i] + parseInt(cm.getPlayer().getHair() % 10));
                 cm.sendYesNo("If you use the REG coupon your hair will change RANDOMLY with a chance to obtain a new experimental style that I came up with. Are you going to use #b#t5150011##k and really change your hairstyle?");
             } else if (selection == 1) {
                 beauty = 1;
                 hairnew = Array();
-                hair = cm.getHairIds(103000005);
+                hair = cm.getHairIds(true, 103000005);
                 for (var i = 0; i < hair.length; i++)
                     pushIfItemExists(hairnew, hair[i] + parseInt(cm.getPlayer().getHair() % 10));
                 cm.sendYesNo("If you use the EXP coupon your hair will change RANDOMLY with a chance to obtain a new experimental style that I came up with. Are you going to use #b#t5150011##k and really change your hairstyle?");

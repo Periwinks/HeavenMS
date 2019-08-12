@@ -315,11 +315,12 @@ public class NPCConversationManager extends AbstractPlayerInteraction {
         
         /**
          * Gets an array of hairstyles for the salon NPC source
+         * @param isRegularCoupon REG or VIP? (assuming they have different pools of styles)
          * @param mapid
          * @return array of hairstyle id for correct gender
          */
-        public int[] getHairIds(int mapid) {
-            return MapleSalon.instance().getHairstyles(mapid, getPlayer().getGender());
+        public int[] getHairIds(boolean isRegularCoupon, int mapid) {
+            return MapleSalon.instance().getHairstyles(isRegularCoupon, mapid, getPlayer().getGender());
         }
         
         public int[] getRoyalHairIds() {

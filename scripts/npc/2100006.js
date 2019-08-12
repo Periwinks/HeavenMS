@@ -38,7 +38,7 @@ function action(mode, type, selection) {
 			if (selection == 0) {
 				beauty = 1;
 				hairnew = Array();
-				hair = cm.getHairIds(260000000);
+				hair = cm.getHairIds(false, 260000000);
                 for (var i = 0; i < hair.length; i++)
                     pushIfItemExists(hairnew, hair[i] + parseInt(cm.getPlayer().getHair() % 10));
 				cm.sendStyle("Hahaha~all you need is #bAriant hair style coupon(VIP)#k to change up your hairstyle. Choose the new style, and let me do the rest.", hairnew);

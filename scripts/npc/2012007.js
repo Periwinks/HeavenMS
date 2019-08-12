@@ -50,21 +50,21 @@ function action(mode, type, selection) {
             if (selection == 0) {
                 beauty = 4;
                 hairnew = Array();
-                hair = cm.getHairIds(200000202);
+                hair = cm.getHairIds(true, 200000202);
                 for (var i = 0; i < hair.length; i++)
                     pushIfItemExists(hairnew, hair[i] + parseInt(cm.getPlayer().getHair() % 10));
                 cm.sendYesNo("If you use the DRT coupon your hair will change RANDOMLY with a chance to obtain the basic styles that I came up with. Are you going to use #b#t5154000##k and really change your hairstyle?");
             } else if (selection == 1) {
                 beauty = 3;
                 hairnew = Array();
-                hair = cm.getHairIds(200000202);
+                hair = cm.getHairIds(true, 200000202);
                 for (var i = 0; i < hair.length; i++)
                     pushIfItemExists(hairnew, hair[i] + parseInt(cm.getPlayer().getHair() % 10));
                 cm.sendYesNo("If you use the REG coupon your hair will change RANDOMLY. Are you going to use #b#t5150004##k and really change your hairstyle?");
             } else if (selection == 2) {
                 beauty = 1;
                 hairnew = Array();
-                hair = cm.getHairIds(200000202);
+                hair = cm.getHairIds(true, 200000202);
                 for (var i = 0; i < hair.length; i++)
                     pushIfItemExists(hairnew, hair[i] + parseInt(cm.getPlayer().getHair() % 10));
                 cm.sendYesNo("If you use the EXP coupon your hair will change RANDOMLY with a chance to obtain a new experimental style that I came up with. Are you going to use #b#t5150013##k and really change your hairstyle?");
