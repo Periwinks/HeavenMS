@@ -6,6 +6,22 @@ and this project also *attempts* to adhere to [Semantic Versioning](https://semv
 
 ## [Unreleased](https://github.com/Periwinks/HeavenMS/compare/master...sprint)
 
+## [0.1.0] - 2019-08-12
+### Added
+- Ability to drop permanent cash items (for upcoming tradable cash)
+- MapleSalon allows server owner to customize the styles they wish to have all in one place
+
+### Removed
+- Royal Choice coupon (the one that allows you to select your royal style)
+
+### Changed
+- Character hairstyles have been remapped entirely; does not change gameplay.
+- Hairstylist NPC scripts will now pull from lists in MapleSalon.java
+- Made clarifications in `mapowner` command for ease of understanding
+
+### Fixed
+- Cash Shop Guild BBS emojis will no longer prevent post from sending
+
 ## [0.0.1] - 2019-08-07
 ### Removed
 - HeavenMS style item leveling
