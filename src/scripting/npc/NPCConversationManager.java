@@ -57,6 +57,7 @@ import client.SkillFactory;
 import client.inventory.Item;
 import client.inventory.ItemFactory;
 import client.inventory.MaplePet;
+import com.sun.javafx.geom.transform.BaseTransform;
 import constants.GameConstants;
 import constants.ItemConstants;
 import constants.LanguageConstants;
@@ -311,6 +312,24 @@ public class NPCConversationManager extends AbstractPlayerInteraction {
 	public void showEffect(String effect) {
 		getPlayer().getMap().broadcastMessage(MaplePacketCreator.environmentChange(effect, 3));
 	}
+        
+        /**
+         * Gets an array of hairstyles for the salon NPC source
+         * @param isRegularCoupon REG or VIP? (assuming they have different pools of styles)
+         * @param mapid
+         * @return array of hairstyle id for correct gender
+         */
+        public int[] getHairIds(boolean isRegularCoupon, int mapid) {
+            return MapleSalon.instance().getHairstyles(isRegularCoupon, mapid, getPlayer().getGender());
+        }
+        
+        public int[] getRoyalHairIds() {
+            return MapleSalon.instance().getRoyalHairstyles(getPlayer().getGender());
+        }
+        
+        public int[] get9201039HairIds() {
+            return MapleSalon.instance().getClaudiaHairstyles(getPlayer().getGender());
+        }
 
 	public void setHair(int hair) {
 		getPlayer().setHair(hair);

@@ -8,8 +8,7 @@
 
 var status = 0;
 var beauty = 0;
-var mhair_r = Array(30150, 30170, 30180, 30320, 30330, 30410, 30460, 30680, 30800, 30820, 30900);
-var fhair_r = Array(31090, 31190, 31330, 31340, 31400, 31420, 31520, 31620, 31650, 31660, 34000);
+var hair = Array();
 var hairnew = Array();
 
 function pushIfItemExists(array, itemid) {
@@ -41,18 +40,9 @@ function action(mode, type, selection) {
 			if (selection == 0) {
 				beauty = 1;
 				hairnew = Array();
-				if (cm.getChar().getGender() == 0) {
-					for(var i = 0; i < mhair_r.length; i++) {
-						pushIfItemExists(hairnew, mhair_r[i] + parseInt(cm.getChar().getHair()
- % 10));
-					}
-				} 
-				if (cm.getChar().getGender() == 1) {
-					for(var i = 0; i < fhair_r.length; i++) {
-						pushIfItemExists(hairnew, fhair_r[i] + parseInt(cm.getChar().getHair()
- % 10));
-					}
-				}
+				hair = cm.getHairIds(true, 260000000);
+                for (var i = 0; i < hair.length; i++)
+                    pushIfItemExists(hairnew, hair[i] + parseInt(cm.getPlayer().getHair() % 10));
 				cm.sendYesNo("If you use the REG coupon, your hairstyle will be changed to a random new look. You'll also have access to new hairstyles I worked on that's not available for VIP coupons. Would you like to use #bAriant hair style coupon(REG)#k for a fabulous new look?");
 			} else if (selection == 1) {
 				beauty = 2;

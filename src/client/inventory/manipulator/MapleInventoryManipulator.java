@@ -725,7 +725,9 @@ public class MapleInventoryManipulator {
                 map.disappearingItemDrop(chr, chr, target, dropPos);
             }
             
-            if (ii.isDropRestricted(target.getItemId()) || ii.isCash(target.getItemId()) || isDroppedItemRestricted(target)) {
+            boolean nonPermaCash = (ii.isCash(itemId) && source.getExpiration() != -1);
+            
+            if (ii.isDropRestricted(target.getItemId()) || nonPermaCash || isDroppedItemRestricted(target)) {
                 map.disappearingItemDrop(chr, chr, target, dropPos);
             } else {
                 map.spawnItemDrop(chr, chr, target, dropPos, true, true);
@@ -758,7 +760,9 @@ public class MapleInventoryManipulator {
                 map.disappearingItemDrop(chr, chr, source, dropPos);
             }
             
-            if (ii.isDropRestricted(itemId) || ii.isCash(itemId) || isDroppedItemRestricted(source)) {
+            boolean nonPermaCash = (ii.isCash(itemId) && source.getExpiration() != -1);
+            
+            if (ii.isDropRestricted(itemId) || nonPermaCash || isDroppedItemRestricted(source)) {
                 map.disappearingItemDrop(chr, chr, source, dropPos);
             } else {
                 map.spawnItemDrop(chr, chr, source, dropPos, true, true);

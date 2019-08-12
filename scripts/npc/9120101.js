@@ -28,8 +28,7 @@ var status = 0;
 var beauty = 0;
 var hairprice = 1000000;
 var haircolorprice = 1000000;
-var mhair_r = Array(30260, 30280, 30340, 30360, 30710, 30780, 30790, 30800, 30810, 30820, 30920);
-var fhair_r = Array(31350, 31410, 31460, 31540, 31550, 31710, 31720, 31770, 31790, 31800, 31850, 34000);
+var hair = Array();
 var hairnew = Array();
 
 function pushIfItemExists(array, itemid) {
@@ -57,16 +56,9 @@ function action(mode, type, selection) {
             if (selection == 1) {
                 beauty = 1;
                 hairnew = Array();
-                if (cm.getPlayer().getGender() == 0) {
-                    for(var i = 0; i < mhair_r.length; i++) {
-                        pushIfItemExists(hairnew, mhair_r[i] + parseInt(cm.getPlayer().getHair()  % 10));
-                    }
-                }
-                if (cm.getPlayer().getGender() == 1) {
-                    for(var i = 0; i < fhair_r.length; i++) {
-                        pushIfItemExists(hairnew, fhair_r[i] + parseInt(cm.getPlayer().getHair() % 10));
-                    }
-                }
+                hair = cm.getHairIds(true, 801000001);
+                for (var i = 0; i < hair.length; i++)
+                    pushIfItemExists(hairnew, hair[i] + parseInt(cm.getPlayer().getHair() % 10));
                 cm.sendYesNo("If you use the REG coupon your hair will change RANDOMLY with a chance to obtain a new experimental style that I came up with. Are you going to use #b#t5150008##k and really change your hairstyle?");
             } else if (selection == 2) {
                 beauty = 2;

@@ -27,8 +27,7 @@
 */
 
 var status = 0;
-var mhair_q = Array(30270, 30240, 30020, 30000, 30132, 30192, 30032, 30112, 30162);
-var fhair_q = Array(31150, 31250, 31310, 31050, 31050, 31030, 31070, 31091, 31001);
+var hair = Array();
 var hairnew = Array();
 
 function pushIfItemExists(array, itemid) {
@@ -56,12 +55,9 @@ function action(mode, type, selection) {
     status++;
     if (status == 1) {
         hairnew = Array();
-        if (cm.getPlayer().getGender() == 0)
-            for(var i = 0; i < mhair_q.length; i++)
-                pushIfItemExists(hairnew, mhair_q[i]);
-        else
-            for(var j = 0; j < fhair_q.length; j++)
-                pushIfItemExists(hairnew, fhair_q[j]);
+        hair = cm.get9201039HairIds();
+        for (var i = 0; i < hair.length; i++)
+            pushIfItemExists(hairnew, hair[i] + parseInt(cm.getPlayer().getHair() % 10)); // Don't let claudia remove your precious colors ):
         cm.sendNext("Here we go!");
     } else {
         if (cm.haveItem(4031528)) {

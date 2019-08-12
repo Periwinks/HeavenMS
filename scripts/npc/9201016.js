@@ -28,8 +28,7 @@ var status = 0;
 var beauty = 0;
 var hairprice = 1000000;
 var haircolorprice = 1000000;
-var mhair_e = Array(30000, 30020, 30110, 30130, 30160, 30190, 30240, 30270, 30430);
-var fhair_e = Array(31000, 31030, 31050, 31070, 31090, 31150, 31310, 31910, 34010);
+var hair = Array();
 var hairnew = Array();
 
 function pushIfItemExists(array, itemid) {
@@ -57,18 +56,9 @@ function action(mode, type, selection) {
             if (selection == 1) {
                 beauty = 1;
                 hairnew = Array();
-                if (cm.getPlayer().getGender() == 0) {
-                    for(var i = 0; i < mhair_e.length; i++) {
-                        pushIfItemExists(hairnew, mhair_e[i] + parseInt(cm.getPlayer().getHair()
-                            % 10));
-                    }
-                }
-                if (cm.getPlayer().getGender() == 1) {
-                    for(var i = 0; i < fhair_e.length; i++) {
-                        pushIfItemExists(hairnew, fhair_e[i] + parseInt(cm.getPlayer().getHair()
-                            % 10));
-                    }
-                }
+                hair = cm.getHairIds(true, 680000002);
+                for (var i = 0; i < hair.length; i++)
+                    pushIfItemExists(hairnew, hair[i] + parseInt(cm.getPlayer().getHair() % 10));
                 cm.sendYesNo("If you use the EXP coupon your hair will change RANDOMLY with a chance to obtain a new experimental style that even you didn't think was possible. Are you going to use #b#t5150019##k and really change your hairstyle?");
             } else if (selection == 2) {
                 beauty = 2;

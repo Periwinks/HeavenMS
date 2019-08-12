@@ -9430,27 +9430,6 @@ public class MapleCharacter extends AbstractMapleCharacterObject {
         }
     }
     
-    public void showMapOwnershipInfo(MapleCharacter mapOwner) {
-        long curTime = Server.getInstance().getCurrentTime();
-        if(nextWarningTime < curTime) {
-            nextWarningTime = curTime + (60 * 1000);   // show underlevel info again after 1 minute
-            
-            String medal = "";
-            Item medalItem = mapOwner.getInventory(MapleInventoryType.EQUIPPED).getItem((short) -49);
-            if (medalItem != null) {
-                medal = "<" + ii.getName(medalItem.getItemId()) + "> ";
-            }
-            
-            List<String> strLines = new LinkedList<>();
-            strLines.add("");
-            strLines.add("");
-            strLines.add("");
-            strLines.add(this.getClient().getChannelServer().getServerMessage().isEmpty() ? 0 : 1, "Get off my lawn!!");
-            
-            this.announce(MaplePacketCreator.getAvatarMega(mapOwner, medal, this.getClient().getChannel(), 5390006, strLines, true));
-        }
-    }
-    
     public void showHint(String msg) {
         showHint(msg, 500);
     }
